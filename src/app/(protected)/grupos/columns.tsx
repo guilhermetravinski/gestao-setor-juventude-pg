@@ -63,10 +63,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'amount',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Amount"
-      />
+      <DataTableColumnHeader column={column} title="Amount" />
     ),
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'))

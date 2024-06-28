@@ -16,7 +16,7 @@ export default function NavLink({
   return (
     <Link
       href={`/${slug}`}
-      className={`${isActive ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+      className={`${isActive ? 'text-foreground' : 'text-muted-foreground'} transition-colors hover:text-foreground`}
     >
       {children}
     </Link>
