@@ -12,8 +12,10 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
+import { Download, Filter, Plus } from 'lucide-react'
 import React from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -25,7 +27,6 @@ import {
 } from '@/components/ui/table'
 
 import { DataTablePagination } from './data-table-pagination'
-import { DataTableViewOptions } from './data-table-view-options'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -68,14 +69,23 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          placeholder="Buscar por nome..."
+          value={(table.getColumn('nome')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
+            table.getColumn('nome')?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <DataTableViewOptions table={table} />
+
+        <Button className="ml-auto">
+          <Plus className="mr-2 h-4 w-4" /> Novo grupo
+        </Button>
+        <Button className="ml-3" variant="outline">
+          <Filter className="mr-2 h-4 w-4" /> Filtrar
+        </Button>
+        <Button className="ml-3" variant="outline">
+          <Download className="mr-2 h-4 w-4" /> Exportar
+        </Button>
       </div>
       <div className="rounded-md border bg-card">
         <Table>
