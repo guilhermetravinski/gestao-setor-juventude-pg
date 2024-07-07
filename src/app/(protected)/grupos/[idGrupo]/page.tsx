@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardFooter,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -21,12 +21,32 @@ interface GrupoPageProps {
 export default function GrupoPage({ params }: GrupoPageProps) {
   console.log(params)
   return (
-    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
-      <div className="mx-auto grid w-full max-w-6xl gap-2">
-        <h1 className="text-3xl font-semibold">Juventude Bom Jesus</h1>
+    <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
+      <div className="mx-auto flex w-full max-w-6xl gap-2">
+        <h1 className="mr-auto text-3xl font-semibold">Juventude Bom Jesus</h1>
+        <Button size="sm" variant="outline">
+          <Pencil className="mr-2 h-4 w-4" />
+          Editar
+        </Button>
       </div>
       <div className="mx-auto w-full max-w-6xl items-start gap-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="col-span-1 grid grid-cols-1 gap-6 md:col-span-2 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Jovens ativos</CardTitle>
+                <CardDescription>Cerca de 20</CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Reuniões</CardTitle>
+
+                <CardDescription> 3º sábado às 14h</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
           <div className="flex flex-col gap-6">
             <Card>
               <CardHeader>
@@ -41,12 +61,6 @@ export default function GrupoPage({ params }: GrupoPageProps) {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" variant="outline">
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Editar
-                </Button>
-              </CardFooter>
             </Card>
             <Card>
               <CardHeader>
@@ -71,33 +85,43 @@ export default function GrupoPage({ params }: GrupoPageProps) {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button size="sm" variant="outline">
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Editar
+            </Card>
+            <Card className="col-span-1 md:col-span-2">
+              <CardHeader className="flex flex-row space-y-0">
+                <CardTitle>Atas</CardTitle>
+
+                <Button size="sm" className="ml-auto">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nova ata
                 </Button>
-              </CardFooter>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center justify-center">
+                  <File className="h-16 w-16 text-muted-foreground" />
+                  <span className="mt-4 text-muted-foreground">
+                    Ainda não há atas
+                  </span>
+                </div>
+              </CardContent>
             </Card>
           </div>
           <div>
             <Card className="col-span-1 md:col-span-2">
               <CardHeader className="flex flex-row space-y-0">
-                <CardTitle>Informações</CardTitle>
-
-                <Button size="sm" className="ml-auto" variant="outline">
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Editar
-                </Button>
+                <CardTitle>História</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col">
-                <span className="font-semibold">Paróquia</span>
-                <span className="text-muted-foreground">Bom Jesus</span>
-                <Separator className="my-3" />
                 <span className="font-semibold">Setor</span>
                 <span className="text-muted-foreground">3</span>
                 <Separator className="my-3" />
-                <span className="font-semibold">Jovens ativos</span>
-                <span className="text-muted-foreground">20</span>
+                <span className="font-semibold">Paróquia</span>
+                <span className="text-muted-foreground">Bom Jesus</span>
+                <Separator className="my-3" />
+                <span className="font-semibold">Comunidade</span>
+                <span className="text-muted-foreground">Matriz</span>
+                <Separator className="my-3" />
+                <span className="font-semibold">Data de fundação</span>
+                <span className="text-muted-foreground">Maio de 2000</span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Biografia</span>
                 <span className="text-muted-foreground">
@@ -117,26 +141,6 @@ export default function GrupoPage({ params }: GrupoPageProps) {
                   espírito, proporcionando um espaço acolhedor e formativo para
                   nossos jovens.
                 </span>
-              </CardContent>
-            </Card>
-          </div>{' '}
-          <div>
-            <Card className="col-span-1 md:col-span-2">
-              <CardHeader className="flex flex-row space-y-0">
-                <CardTitle>Atas</CardTitle>
-
-                <Button size="sm" className="ml-auto">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nova ata
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center justify-center">
-                  <File className="h-16 w-16 text-muted-foreground" />
-                  <span className="mt-4 text-muted-foreground">
-                    Ainda não há atas
-                  </span>
-                </div>
               </CardContent>
             </Card>
           </div>

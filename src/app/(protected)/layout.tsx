@@ -2,6 +2,7 @@ import { CircleUser, Menu, Package2 } from 'lucide-react'
 import { headers } from 'next/headers'
 import Link from 'next/link'
 
+import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -78,14 +79,11 @@ export default function ProtectedLayout({
             </nav>
           </SheetContent>
         </Sheet>
-        <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
+          <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="ml-auto rounded-full"
-              >
+              <Button variant="secondary" size="icon" className="rounded-full">
                 <CircleUser className="h-5 w-5" />
                 <span className="sr-only">Menu de alternar usuário</span>
               </Button>
