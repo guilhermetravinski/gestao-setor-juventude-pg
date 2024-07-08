@@ -13,6 +13,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { Download, Filter, Plus } from 'lucide-react'
+import { redirect, useRouter } from 'next/navigation'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -41,6 +42,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   )
+  const router = useRouter()
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
@@ -77,7 +79,7 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
 
-        <Button className="ml-auto">
+        <Button className="ml-auto" onClick={() => router.push('/grupos/novo')}>
           <Plus className="mr-2 h-4 w-4" /> Novo grupo
         </Button>
         <Button className="ml-3" variant="outline">

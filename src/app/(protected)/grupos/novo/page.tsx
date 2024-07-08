@@ -1,4 +1,4 @@
-import { GrupoForm } from '../grupo-form'
+import { GrupoForm } from '../form/grupo-form'
 
 export default function NovoGrupoPage() {
   return (
