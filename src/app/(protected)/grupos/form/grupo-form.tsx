@@ -1,16 +1,13 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { CalendarIcon } from 'lucide-react'
+import { Plus, Trash } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import MaskedInput from '@/components/masked-input'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import {
   Form,
   FormControl,
@@ -21,20 +18,16 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 import { setores } from '@/data/setores'
-import { cn } from '@/lib/utils'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -42,6 +35,7 @@ export function GrupoForm() {
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
   })
+  const { toast } = useToast()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -59,7 +53,9 @@ export function GrupoForm() {
 
   const [selectedSetor, setSelectedSetor] = useState('')
   const [paroquias, setParoquias] = useState<string[]>([])
-
+  const currentYear = new Date().getFullYear()
+  const years = Array.from(new Array(50), (val, index) => currentYear - index)
+  const router = useRouter()
   useEffect(() => {
     if (selectedSetor) {
       const setorData = setores.find(
@@ -73,6 +69,11 @@ export function GrupoForm() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+    toast({
+      variant: 'success',
+      title: 'Grupo cadastrado com sucesso',
+    })
+    router.push('/grupos')
   }
 
   function handleAddRede() {
@@ -176,45 +177,29 @@ export function GrupoForm() {
         />
         <FormField
           control={form.control}
-          name="dtFundacao"
+          name="anoFundacao"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Data de fundação</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={'outline'}
-                      className={cn(
-                        'pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, 'PPP', { locale: ptBR })
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date('1900-01-01')
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+            <FormItem>
+              <FormLabel>Ano de fundação</FormLabel>
+              <FormControl>
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o ano de fundação" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="biografia"
@@ -222,7 +207,11 @@ export function GrupoForm() {
             <FormItem>
               <FormLabel>Biografia</FormLabel>
               <FormControl>
-                <Textarea placeholder="Hisória do grupo" {...field} />
+                <Textarea
+                  placeholder="Hisória do grupo"
+                  {...field}
+                  maxLength={250}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -231,92 +220,123 @@ export function GrupoForm() {
         <div>
           <FormLabel>Coordenação</FormLabel>
           {fields.map((item, index) => (
-            <div key={item.id} className="flex space-x-2">
-              <FormField
-                control={form.control}
-                name={`coordenacao.${index}.nome`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Nome do coordenador" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`coordenacao.${index}.telefone`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <MaskedInput
-                        mask="(99) 99999-9999"
-                        placeholder="Telefone do coordenador"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="button" onClick={() => remove(index)}>
-                Remover
+            <div
+              key={item.id}
+              className="mt-2 flex items-center rounded bg-background p-6 shadow"
+            >
+              <div className="mr-6 flex flex-1 flex-col gap-4">
+                <FormField
+                  control={form.control}
+                  name={`coordenacao.${index}.nome`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Nome do coordenador" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`coordenacao.${index}.telefone`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          placeholder="Telefone do coordenador"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Button
+                type="button"
+                onClick={() => remove(index)}
+                variant="ghost"
+              >
+                <Trash className="h-4 w-4" />
               </Button>
             </div>
           ))}
-          <Button
-            type="button"
-            onClick={() => append({ nome: '', telefone: '' })}
-          >
-            Adicionar Coordenador
-          </Button>
+          {fields.length < 5 && (
+            <div className="mt-2 flex justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => append({ nome: '', telefone: '' })}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar Coordenador
+              </Button>
+            </div>
+          )}
         </div>
+        <Separator />
         <div>
           <FormLabel>Redes sociais</FormLabel>
           {redesFields.map((item, index) => (
-            <div key={item.id} className="flex space-x-2">
-              <FormField
-                control={form.control}
-                name={`redesSociais.${index}.rede`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Select onValueChange={(value) => field.onChange(value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione a rede social" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Facebook">Facebook</SelectItem>
-                          <SelectItem value="Instagram">Instagram</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`redesSociais.${index}.nomeUsuario`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Nome de usuário" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="button" onClick={() => removeRedes(index)}>
-                Remover
+            <div
+              key={item.id}
+              className="mt-2 flex items-center rounded bg-background p-6 shadow"
+            >
+              <div className="mr-6 flex flex-1 flex-col gap-4">
+                <FormField
+                  control={form.control}
+                  name={`redesSociais.${index}.rede`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a rede social" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Facebook">Facebook</SelectItem>
+                            <SelectItem value="Instagram">Instagram</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`redesSociais.${index}.nomeUsuario`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Nome de usuário" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Button
+                type="button"
+                onClick={() => removeRedes(index)}
+                variant="ghost"
+              >
+                <Trash className="h-4 w-4" />
               </Button>
             </div>
           ))}
           {redesFields.length < 2 && (
-            <Button type="button" onClick={handleAddRede}>
-              Adicionar Rede Social
-            </Button>
+            <div className="mt-2 flex justify-center">
+              <Button type="button" variant="outline" onClick={handleAddRede}>
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar Rede Social
+              </Button>
+            </div>
           )}
         </div>
         <FormField
@@ -352,7 +372,7 @@ export function GrupoForm() {
             <FormItem>
               <FormLabel>Reuniões</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Data e hora das reuniões" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -365,13 +385,19 @@ export function GrupoForm() {
             <FormItem>
               <FormLabel>Observações</FormLabel>
               <FormControl>
-                <Textarea placeholder="shadcn" {...field} />
+                <Textarea
+                  placeholder="Observações sobre o grupo"
+                  {...field}
+                  maxLength={250}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Salvar grupo</Button>
+        <Button type="submit" disabled={!form.formState.isValid}>
+          Salvar grupo
+        </Button>
       </form>
     </Form>
   )

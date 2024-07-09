@@ -13,7 +13,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { Download, Filter, Plus } from 'lucide-react'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 import { Button } from '@/components/ui/button'
