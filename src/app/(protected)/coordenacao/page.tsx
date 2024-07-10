@@ -1,102 +1,53 @@
+import { Pencil } from 'lucide-react'
+import Link from 'next/link'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+
+function CardCoordenador({ setor }: { setor: string }) {
+  return (
+    <div className="flex rounded-full bg-background p-6 shadow sm:p-0">
+      <Avatar className="hidden h-32 w-32 sm:flex">
+        <AvatarImage
+          src="https://github.com/guilhermetravinski.png"
+          alt="Avatar"
+        />
+        <AvatarFallback>OM</AvatarFallback>
+      </Avatar>
+      <div className="ml-3 flex flex-col justify-center p-4">
+        <span className="mb-2 text-lg font-bold">Setor {setor}</span>
+        <p className="mb-1 leading-none text-foreground">
+          Guilherme Travinski Ferreira
+        </p>
+        <p className="text-sm text-muted-foreground">42 95416-4516</p>
+      </div>
+    </div>
+  )
+}
 
 export default function CoordenacaoPage() {
   return (
     <main className="flex flex-1 flex-col gap-8 bg-muted/40 p-10">
-      <div className="mx-auto w-full max-w-6xl">
-        <h1 className="text-3xl font-semibold">Coordenação diocesana</h1>
+      <div className="mx-auto flex w-full max-w-6xl gap-2">
+        <h1 className="mr-auto text-3xl font-semibold">
+          Coordenação diocesana
+        </h1>
+        <Link href="/coordenacao/editar" passHref>
+          <Button size="sm" variant="outline">
+            <Pencil className="mr-2 h-4 w-4" />
+            Editar
+          </Button>
+        </Link>
       </div>
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="flex w-[400px] rounded-full bg-white shadow">
-          <Avatar className="hidden h-20 w-20 sm:flex">
-            <AvatarImage
-              src="https://github.com/guilhermetravinski.png"
-              alt="Avatar"
-            />
-            <AvatarFallback>OM</AvatarFallback>
-          </Avatar>
-          <div className="ml-3 flex flex-col justify-center">
-            <p className="text-lg font-medium leading-none">
-              Guilherme Travinski Ferreira
-            </p>
-            <p className="text-sm text-muted-foreground">42 95416-4516</p>
-          </div>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Sales</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-8">
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                <AvatarFallback>OM</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">
-                  Olivia Martin
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  olivia.martin@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$1,999.00</div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/02.png" alt="Avatar" />
-                <AvatarFallback>JL</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">Jackson Lee</p>
-                <p className="text-sm text-muted-foreground">
-                  jackson.lee@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$39.00</div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/03.png" alt="Avatar" />
-                <AvatarFallback>IN</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">
-                  Isabella Nguyen
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  isabella.nguyen@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$299.00</div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/04.png" alt="Avatar" />
-                <AvatarFallback>WK</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">William Kim</p>
-                <p className="text-sm text-muted-foreground">will@email.com</p>
-              </div>
-              <div className="ml-auto font-medium">+$99.00</div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src="/avatars/05.png" alt="Avatar" />
-                <AvatarFallback>SD</AvatarFallback>
-              </Avatar>
-              <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">Sofia Davis</p>
-                <p className="text-sm text-muted-foreground">
-                  sofia.davis@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$39.00</div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
+        <CardCoordenador setor="1" />
+        <CardCoordenador setor="2" />
+        <CardCoordenador setor="3" />
+        <CardCoordenador setor="4" />
+        <CardCoordenador setor="5" />
+        <CardCoordenador setor="6" />
+        <CardCoordenador setor="7" />
+        <CardCoordenador setor="8" />
       </div>
     </main>
   )
