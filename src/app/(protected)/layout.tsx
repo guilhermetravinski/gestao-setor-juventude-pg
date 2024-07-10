@@ -1,5 +1,6 @@
 import { CircleUser, Menu, Package2 } from 'lucide-react'
 import { headers } from 'next/headers'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { ModeToggle } from '@/components/mode-toggle'
@@ -14,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
+import logo from '../../../public/logo.png'
 import NavLink from './nav-link'
 
 export default function ProtectedLayout({
@@ -34,11 +36,22 @@ export default function ProtectedLayout({
               href="/"
               className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
+              <Image
+                src={logo}
+                alt="Logo do Setor Juventude de Ponta Grossa"
+                height={36}
+                className="rounded-lg"
+                placeholder="blur"
+              />
+              <span className="sr-only">
+                Logo do Setor Juventude de Ponta Grossa
+              </span>
             </Link>
-            <NavLink slug="coordenacao">Coordenação</NavLink>
+            <NavLink slug="coordenacao">Coordenação</NavLink>{' '}
             <NavLink slug="grupos">Grupos</NavLink>
+            <NavLink slug="movimentos-e-pastorais">
+              Movimentos e pastorais
+            </NavLink>
             <NavLink slug="agenda">Agenda</NavLink>
           </nav>
           <Sheet>
