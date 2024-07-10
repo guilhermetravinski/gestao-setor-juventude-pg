@@ -1,6 +1,6 @@
 'use client'
 
-import { File, Plus } from 'lucide-react'
+import { File, Trash } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 
@@ -8,10 +8,39 @@ import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
+import { DialogNovoEvento } from './dialog-novo-evento'
+
+export interface Evento {
+  titulo: string
+  local: string
+  data: Date
+  horario: string
+  descricao: string
+}
+
 export default function AgendaPage() {
   const [date, setDate] = useState<DateRange | undefined>()
+  const [eventos, setEventos] = useState<Evento[]>([
+    {
+      titulo: 'Festival de música',
+      local: 'Salão da Paróquia',
+      data: new Date(),
+      horario: '10:00',
+      descricao: 'Evento do grupo de jovens',
+    },
+  ])
 
   useEffect(() => console.log(date), [date])
+
+  function handleRemoveEvento(removeEvento: Evento) {
+    setEventos((prevEventos) =>
+      prevEventos.filter((evento) => evento !== removeEvento),
+    )
+  }
+
+  function handleAddEvento(evento: Evento) {
+    setEventos((prevEventos) => [...prevEventos, evento])
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-8 bg-muted/40 p-10">
@@ -22,19 +51,41 @@ export default function AgendaPage() {
         <div className="w-full md:w-[1000px]">
           <Card>
             <CardHeader className="flex flex-row space-y-0">
-              <CardTitle>Evento</CardTitle>
-              <Button size="sm" className="ml-auto">
-                <Plus className="mr-2 h-4 w-4" />
-                Novo evento
-              </Button>
+              <CardTitle>Eventos</CardTitle>
+              <DialogNovoEvento onClose={handleAddEvento} />
             </CardHeader>
             <CardContent className="flex flex-col">
-              <div className="flex flex-col items-center justify-center">
-                <File className="h-16 w-16 text-muted-foreground" />
-                <span className="mt-4 text-muted-foreground">
-                  Ainda não há atas
-                </span>
-              </div>
+              {eventos.length === 0 ? (
+                <div className="flex flex-col items-center justify-center">
+                  <File className="h-16 w-16 text-muted-foreground" />
+                  <span className="mt-4 text-muted-foreground">
+                    Ainda não há eventos
+                  </span>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {eventos.map((evento, index) => (
+                    <Card key={index}>
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                        <CardTitle>{evento.titulo}</CardTitle>
+
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleRemoveEvento(evento)}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="flex flex-col">
+                        <span>Local: {evento.local}</span>
+                        <span>Data: {evento.data.toLocaleDateString()}</span>
+                        <span>Horário: {evento.horario}</span>
+                        <span>Descrição: {evento.descricao}</span>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
