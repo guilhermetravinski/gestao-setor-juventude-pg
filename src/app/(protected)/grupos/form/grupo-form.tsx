@@ -34,6 +34,12 @@ import { formSchema, FormSchemaType } from './form-schema'
 export function GrupoForm() {
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      nome: '',
+      comunidade: ''
+
+    },
+  
   })
   const { toast } = useToast()
 
@@ -67,14 +73,40 @@ export function GrupoForm() {
     }
   }, [selectedSetor])
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    toast({
-      variant: 'success',
-      title: 'Grupo cadastrado com sucesso',
-    })
-    router.push('/grupos')
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch('/api/grupos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+
+      if (response.ok) {
+        toast({
+          variant: 'success',
+          title: 'Grupo cadastrado com sucesso',
+        })
+        router.push('/grupos')
+      } else {
+        const errorData = await response.json()
+        toast({
+          variant: 'destructive',
+          title: 'Erro ao cadastrar grupo',
+          description: errorData.error,
+        })
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao cadastrar grupo'
+      })
+    }
   }
+
+
 
   function handleAddRede() {
     const existingRedes = redesFields.map((field) => field.rede)
@@ -395,7 +427,7 @@ export function GrupoForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={!form.formState.isValid}>
+        <Button type="submit" disabled={!form.formState.isValid || form.formState.isSubmitting}>
           Salvar grupo
         </Button>
       </form>

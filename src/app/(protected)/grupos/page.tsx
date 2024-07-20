@@ -3,21 +3,34 @@ import { Card, CardContent } from '@/components/ui/card'
 import { columns, GrupoJovens } from './columns'
 import { DataTable } from './data-table'
 
-async function getGrupos(): Promise<GrupoJovens[]> {
-  return [
-    {
-      id: '728ed52f',
-      nome: 'Juventude Bom Jesus',
-      setor: '3',
-      paroquia: 'Bom Jesus',
-    },
-    {
-      id: '728ed52a',
-      nome: 'JOFF',
-      setor: '3',
-      paroquia: 'Bom Jesus',
-    },
-  ]
+// async function getGrupos(): Promise<GrupoJovens[]> {
+//   return [
+//     {
+//       id: '728ed52f',
+//       nome: 'Juventude Bom Jesus',
+//       setor: '3',
+//       paroquia: 'Bom Jesus',
+//     },
+//     {
+//       id: '728ed52a',
+//       nome: 'JOFF',
+//       setor: '3',
+//       paroquia: 'Bom Jesus',
+//     },
+//   ]
+// }
+
+async function getGrupos() {
+
+  const res = await fetch('http://localhost:3000/api/grupos', {
+    cache: 'no-store'
+  })
+
+  if (!res.ok) {
+    throw new Error('Erro ao buscar grupos')
+  }
+console.log(res)
+  return res.json()
 }
 
 export default async function GruposPage() {

@@ -13,18 +13,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+model Coordenador {
+  id        String      @id @default(uuid())
+  nome      String
+  telefone  String
+  grupoId   String
+  grupo     Grupo    @relation(fields: [grupoId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model Grupo {
+  id             String          @id @default(uuid())
+  nome           String
+  setor          String
+  paroquia       String
+  comunidade     String
+  anoFundacao    String?
+  biografia      String?
+  coordenadores  Coordenador[]
+  jovesAtivos    String
+  reunioes       String?
+  observacoes    String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
