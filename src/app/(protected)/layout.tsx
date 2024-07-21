@@ -25,7 +25,6 @@ export default function ProtectedLayout({
 }>) {
   const header = headers()
   const pathname = header.get('next-url')
-  console.log('pathName:', pathname)
   return (
     <div className="flex min-h-screen w-full flex-col">
       {pathname}

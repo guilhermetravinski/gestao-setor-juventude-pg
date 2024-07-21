@@ -22,7 +22,7 @@ import { DataTable } from './data-table'
 
 async function getGrupos() {
 
-  const res = await fetch('http://localhost:3000/api/grupos', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/grupos`, {
     cache: 'no-store'
   })
 
