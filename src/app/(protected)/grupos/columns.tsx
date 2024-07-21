@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 
-import { DataTableColumnHeader } from './data-table-column-header'
+import { DataTableColumnHeader } from './DataTable/data-table-column-header'
 
 export type GrupoJovens = {
   id: string

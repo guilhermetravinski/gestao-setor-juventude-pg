@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 
 import { columns, GrupoJovens } from '../grupos/columns'
-import { DataTable } from '../grupos/data-table'
+import { DataTable } from '../grupos/DataTable/data-table'
 
 async function getGrupos(): Promise<GrupoJovens[]> {
   return [

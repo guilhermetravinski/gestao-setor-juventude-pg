@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 
 import { columns, GrupoJovens } from './columns'
-import { DataTable } from './data-table'
+import { DataTable } from './DataTable/data-table'
 
 // async function getGrupos(): Promise<GrupoJovens[]> {
 //   return [
@@ -22,7 +22,7 @@ import { DataTable } from './data-table'
 
 async function getGrupos() {
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/grupos`, {
+  const res = await fetch('http://localhost:3000/api/grupos', {
     cache: 'no-store'
   })
 
