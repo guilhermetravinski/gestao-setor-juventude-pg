@@ -48,7 +48,7 @@ export const formSchema = z.object({
   }),
   anoFundacao: z.string().optional(),
   biografia: z.string().optional(),
-  observacoes: z.string().optional()
+  observacoes: z.string().optional(),
 })
 
 export type FormSchemaType = z.infer<typeof formSchema>

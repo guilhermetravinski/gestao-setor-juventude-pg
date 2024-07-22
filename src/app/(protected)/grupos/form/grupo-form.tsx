@@ -5,6 +5,7 @@ import { Plus, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
+import InputMask from 'react-input-mask'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -33,13 +34,12 @@ import { formSchema, FormSchemaType } from './form-schema'
 
 export function GrupoForm() {
   const form = useForm<FormSchemaType>({
+    mode: 'all',
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome: '',
-      comunidade: ''
-
+      comunidade: '',
     },
-  
   })
   const { toast } = useToast()
 
@@ -73,7 +73,6 @@ export function GrupoForm() {
     }
   }, [selectedSetor])
 
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const response = await fetch('/api/grupos', {
@@ -101,12 +100,10 @@ export function GrupoForm() {
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Erro ao cadastrar grupo'
+        title: 'Erro ao cadastrar grupo',
       })
     }
   }
-
-
 
   function handleAddRede() {
     const existingRedes = redesFields.map((field) => field.rede)
@@ -129,7 +126,9 @@ export function GrupoForm() {
           name="nome"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nome</FormLabel>
+              <FormLabel>
+                Nome <span className="text-xs text-rose-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input placeholder="Nome do grupo" {...field} />
               </FormControl>
@@ -142,7 +141,9 @@ export function GrupoForm() {
           name="setor"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Setor</FormLabel>
+              <FormLabel>
+                Setor <span className="text-xs text-rose-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Select
                   onValueChange={(value) => {
@@ -174,7 +175,9 @@ export function GrupoForm() {
           name="paroquia"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Paróquia</FormLabel>
+              <FormLabel>
+                Paróquia <span className="text-xs text-rose-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Select onValueChange={field.onChange}>
                   <SelectTrigger>
@@ -199,7 +202,9 @@ export function GrupoForm() {
           name="comunidade"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Comunidade</FormLabel>
+              <FormLabel>
+                Comunidade <span className="text-xs text-rose-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input placeholder="Matriz ou capelas" {...field} />
               </FormControl>
@@ -276,10 +281,16 @@ export function GrupoForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input
-                          placeholder="Telefone do coordenador"
-                          {...field}
-                        />
+                        <InputMask
+                          mask="(99) 99999-9999"
+                          value={field.value}
+                          onChange={field.onChange}
+                        >
+                          <Input
+                            placeholder="Telefone do coordenador"
+                            // {...field}
+                          />
+                        </InputMask>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -376,7 +387,9 @@ export function GrupoForm() {
           name="jovesAtivos"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Jovens ativos</FormLabel>
+              <FormLabel>
+                Jovens ativos <span className="text-xs text-rose-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Select onValueChange={field.onChange}>
                   <SelectTrigger>
@@ -427,9 +440,17 @@ export function GrupoForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={!form.formState.isValid || form.formState.isSubmitting}>
-          Salvar grupo
-        </Button>
+        <div className="flex flex-col">
+          <span className="mb-3 text-xs text-rose-500">
+            * Campos obrigatórios
+          </span>
+          <Button
+            type="submit"
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+          >
+            Salvar grupo
+          </Button>
+        </div>
       </form>
     </Form>
   )

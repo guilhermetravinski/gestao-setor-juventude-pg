@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
 
-import { DataTableColumnHeader } from './DataTable/data-table-column-header'
+import { DataTableColumnHeader } from './data-table-column-header'
 
 export type GrupoJovens = {
   id: string
@@ -22,6 +22,13 @@ export const columns: ColumnDef<GrupoJovens>[] = [
       <DataTableColumnHeader column={column} title="Nome" />
     ),
   },
+
+  {
+    accessorKey: 'setor',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Setor" />
+    ),
+  },
   {
     accessorKey: 'paroquia',
     header: ({ column }) => (
@@ -29,12 +36,11 @@ export const columns: ColumnDef<GrupoJovens>[] = [
     ),
   },
   {
-    accessorKey: 'setor',
+    accessorKey: 'comunidade',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Setor" />
+      <DataTableColumnHeader column={column} title="Comunidade" />
     ),
   },
-
   {
     id: 'actions',
     cell: ({ row }) => {

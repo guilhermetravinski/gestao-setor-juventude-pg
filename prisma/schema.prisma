@@ -1,40 +1,53 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-}
-
+// schema.prisma
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
+
 model Coordenador {
-  id        String      @id @default(uuid())
+  id        String   @id @default(uuid())
   nome      String
   telefone  String
-  grupoId   String
-  grupo     Grupo    @relation(fields: [grupoId], references: [id])
+  grupoId   String?  @unique
+  grupo     Grupo?   @relation(fields: [grupoId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model RedeSocial {
+  id          String  @id @default(uuid())
+  rede        String
+  nomeUsuario String
+  grupoId     String?
+  grupo       Grupo?  @relation(fields: [grupoId], references: [id])
+}
+
+model Ata {
+  id        String   @id @default(uuid())
+  data      DateTime
+  descricao String
+  grupoId   String
+  grupo     Grupo    @relation(fields: [grupoId], references: [id])
+}
+
 model Grupo {
-  id             String          @id @default(uuid())
-  nome           String
-  setor          String
-  paroquia       String
-  comunidade     String
-  anoFundacao    String?
-  biografia      String?
-  coordenadores  Coordenador[]
-  jovesAtivos    String
-  reunioes       String?
-  observacoes    String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id            String        @id @default(uuid())
+  nome          String
+  setor         String
+  paroquia      String
+  comunidade    String
+  anoFundacao   String?
+  biografia     String?
+  coordenadores Coordenador[]
+  redesSociais  RedeSocial[]
+  atas          Ata[]
+  jovesAtivos   String
+  reunioes      String?
+  observacoes   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }

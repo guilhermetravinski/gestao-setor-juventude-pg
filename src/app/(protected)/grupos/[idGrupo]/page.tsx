@@ -11,8 +11,11 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { getInitials } from '@/lib/utils'
 
+import facebookLogo from '../../../../../public/facebook.svg'
 import instagramLogo from '../../../../../public/instagram.svg'
+import { Grupo } from '../../../../lib/definitions'
 
 interface GrupoPageProps {
   params: { idGrupo: string }
@@ -20,7 +23,7 @@ interface GrupoPageProps {
 
 async function getGrupoById(id: string) {
   const res = await fetch(`http://localhost:3000/api/grupos/${id}`, {
-    cache: 'no-store'
+    cache: 'no-store',
   })
 
   if (!res.ok) {
@@ -33,7 +36,7 @@ async function getGrupoById(id: string) {
 
 export default async function GrupoPage({ params }: GrupoPageProps) {
   const { idGrupo } = params
-  const grupo = await getGrupoById(idGrupo)
+  const grupo = (await getGrupoById(idGrupo)) as Grupo
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
       <div className="mx-auto flex w-full max-w-6xl gap-2">
@@ -49,7 +52,7 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Jovens ativos</CardTitle>
-                <CardDescription>Cerca de 20</CardDescription>
+                <CardDescription>{grupo.jovesAtivos}</CardDescription>
               </CardHeader>
             </Card>
 
@@ -57,7 +60,9 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
               <CardHeader>
                 <CardTitle>Reuniões</CardTitle>
 
-                <CardDescription> 3º sábado às 14h</CardDescription>
+                <CardDescription>
+                  {grupo.reunioes ?? 'Não informado'}
+                </CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -67,13 +72,28 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <CardTitle>Redes Sociais</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-3">
-                  <Image src={instagramLogo} alt={''} />
-                  <div className="flex flex-col">
-                    <span className="font-semibold">Instagram</span>
-                    <span className="text-muted-foreground">juventude.bj</span>
-                  </div>
-                </div>
+                {grupo.redesSociais.length > 0 ? (
+                  grupo.redesSociais.map((redeSocial, index) => (
+                    <div className="flex gap-3" key={index}>
+                      <Image
+                        src={
+                          redeSocial.rede === 'Facebook'
+                            ? facebookLogo
+                            : instagramLogo
+                        }
+                        alt={''}
+                      />
+                      <div className="flex flex-col">
+                        <span className="font-semibold">{redeSocial.rede}</span>
+                        <span className="text-muted-foreground">
+                          {redeSocial.nomeUsuario}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <span>Não informado</span>
+                )}
               </CardContent>
             </Card>
             <Card>
@@ -81,23 +101,28 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <CardTitle>Coordenação</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-3">
-                  <Avatar>
-                    <AvatarImage
-                      src="https://github.com/guilhermetravinski.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-semibold">
-                      Guilherme Travinski Ferreira
-                    </span>
-                    <span className="text-muted-foreground">
-                      (42) 99921-8862
-                    </span>
-                  </div>
-                </div>
+                {grupo.coordenadores.length > 0 ? (
+                  grupo.coordenadores.map((coordenador, index) => (
+                    <div className="flex gap-3" key={index}>
+                      <Avatar>
+                        <AvatarImage src="" alt="" />
+                        <AvatarFallback>
+                          {getInitials(coordenador.nome)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <span className="font-semibold">
+                          {coordenador.nome}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {coordenador.telefone}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <span> Não informado</span>
+                )}
               </CardContent>
             </Card>
             <Card className="col-span-1 md:col-span-2">
@@ -126,34 +151,29 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
               </CardHeader>
               <CardContent className="flex flex-col">
                 <span className="font-semibold">Setor</span>
-                <span className="text-muted-foreground">3</span>
+                <span className="text-muted-foreground">{grupo.setor}</span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Paróquia</span>
-                <span className="text-muted-foreground">Bom Jesus</span>
+                <span className="text-muted-foreground">{grupo.paroquia}</span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Comunidade</span>
-                <span className="text-muted-foreground">Matriz</span>
+                <span className="text-muted-foreground">
+                  {grupo.comunidade}
+                </span>
                 <Separator className="my-3" />
-                <span className="font-semibold">Data de fundação</span>
-                <span className="text-muted-foreground">Maio de 2000</span>
+                <span className="font-semibold">Ano de fundação</span>
+                <span className="text-muted-foreground">
+                  {grupo.anoFundacao ?? 'Não informado'}
+                </span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Biografia</span>
                 <span className="text-muted-foreground">
-                  Fundado em 2010, o Grupo de Jovens Nova Esperança surgiu da
-                  necessidade de criar um espaço onde os jovens da Paróquia São
-                  Pedro pudessem se encontrar, compartilhar suas experiências de
-                  fé e desenvolver um senso de comunidade. Desde a sua criação,
-                  o grupo tem crescido constantemente, acolhendo jovens de
-                  diferentes bairros e realidades sociais.anciscano
+                  {grupo.biografia ?? 'Não informado'}
                 </span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Observações</span>
                 <span className="text-muted-foreground">
-                  O Grupo de Jovens Nova Esperança tem sido uma bênção para
-                  nossa paróquia e para a comunidade como um todo. Fundado há
-                  mais de uma década, ele continua a crescer em número e em
-                  espírito, proporcionando um espaço acolhedor e formativo para
-                  nossos jovens.
+                  {grupo.observacoes ?? 'Não informado'}
                 </span>
               </CardContent>
             </Card>

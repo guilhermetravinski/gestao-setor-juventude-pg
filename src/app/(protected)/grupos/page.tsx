@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 
-import { columns, GrupoJovens } from './columns'
+import { columns } from './DataTable/columns'
 import { DataTable } from './DataTable/data-table'
 
 // async function getGrupos(): Promise<GrupoJovens[]> {
@@ -21,15 +21,12 @@ import { DataTable } from './DataTable/data-table'
 // }
 
 async function getGrupos() {
-
   const res = await fetch('http://localhost:3000/api/grupos', {
-    cache: 'no-store'
+    cache: 'no-store',
   })
-
   if (!res.ok) {
     throw new Error('Erro ao buscar grupos')
   }
-console.log(res)
   return res.json()
 }
 
