@@ -22,7 +22,7 @@ interface GrupoPageProps {
   params: { idGrupo: string }
 }
 
-export async function getGrupoById(id: string) {
+async function getGrupoById(id: string) {
   const res = await fetch(`http://localhost:3000/api/grupos/${id}`, {
     cache: 'no-store',
   })

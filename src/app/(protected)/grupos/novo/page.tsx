@@ -7,7 +7,7 @@ export default function NovoGrupoPage() {
         <h1 className="mr-auto text-3xl font-semibold">Novo grupo</h1>
       </div>
       <div className="mx-auto w-full max-w-lg items-start gap-6">
-        <GrupoForm />
+        <GrupoForm mode="new" />
       </div>
     </main>
   )
