@@ -67,7 +67,6 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     const grupos = await prisma.grupo.findMany()
-
     return NextResponse.json(grupos)
   } catch (error) {
     console.log(error)

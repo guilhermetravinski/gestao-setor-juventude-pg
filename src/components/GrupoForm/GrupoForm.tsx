@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Trash } from 'lucide-react'
+import { Plus, Trash, XCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -72,7 +72,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
     name: 'redesSociais',
   })
 
-  const [selectedSetor, setSelectedSetor] = useState('')
+  const [selectedSetor, setSelectedSetor] = useState(defaultValues?.setor ?? '')
   const [paroquias, setParoquias] = useState<string[]>([])
   const currentYear = new Date().getFullYear()
   const years = Array.from(new Array(50), (val, index) => currentYear - index)
@@ -90,8 +90,9 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const url = mode === 'new'? '/api/grupos' : `/api/grupos/${}`
-      const response = await fetch(`/api/grupos`, {
+      const url =
+        mode === 'new' ? '/api/grupos' : `/api/grupos/${defaultValues?.id}`
+      const response = await fetch(url, {
         method: mode === 'new' ? 'POST' : 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -102,21 +103,25 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
       if (response.ok) {
         toast({
           variant: 'success',
-          title: 'Grupo cadastrado com sucesso',
+          title: `Grupo ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,
+          duration: 3000,
         })
         router.push('/grupos')
+        router.refresh()
       } else {
         const errorData = await response.json()
         toast({
           variant: 'destructive',
-          title: 'Erro ao cadastrar grupo',
+          title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
           description: errorData.error,
+          duration: 3000,
         })
       }
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Erro ao cadastrar grupo',
+        title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
+        duration: 3000,
       })
     }
   }
@@ -237,9 +242,23 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               <FormLabel>Ano de fundação</FormLabel>
               <FormControl>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o ano de fundação" />
-                  </SelectTrigger>
+                  <div className="flex flex-row">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o ano de fundação" />
+                    </SelectTrigger>{' '}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="ml-2"
+                      size="icon"
+                      onClick={(e) => {
+                        form.setValue('anoFundacao', '')
+                        e.stopPropagation()
+                      }}
+                    >
+                      <XCircle className="text-foreground" />
+                    </Button>
+                  </div>
                   <SelectContent>
                     {years.map((year) => (
                       <SelectItem key={year} value={year.toString()}>
@@ -352,6 +371,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                     <FormItem>
                       <FormControl>
                         <Select
+                          value={field.value}
                           onValueChange={(value) => field.onChange(value)}
                         >
                           <SelectTrigger>
@@ -461,7 +481,12 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
           <span className="mb-3 text-xs text-rose-500">
             * Campos obrigatórios
           </span>
-          <Button type="submit">Salvar grupo</Button>
+          <Button
+            type="submit"
+            disabled={!form.formState.isDirty || form.formState.isLoading}
+          >
+            Salvar grupo
+          </Button>
         </div>
       </form>
     </Form>

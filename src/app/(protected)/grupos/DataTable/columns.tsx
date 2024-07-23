@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 import { DataTableColumnHeader } from './data-table-column-header'
+import { DeleteGrupoDialog } from './DeleteGrupoDialog'
 
 export type GrupoJovens = {
   id: string
@@ -47,11 +48,14 @@ export const columns: ColumnDef<GrupoJovens>[] = [
       // const payment = row.original
 
       return (
-        <Link href={`/grupos/${row.original.id}`} passHref>
-          <Button variant="ghost">
-            <ExternalLink className="h-4 w-4" />
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href={`/grupos/${row.original.id}`} passHref>
+            <Button variant="ghost" size="icon">
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          </Link>
+          <DeleteGrupoDialog grupoId={row.original.id} />
+        </div>
       )
     },
   },

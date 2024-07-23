@@ -65,7 +65,9 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <CardTitle>Reuniões</CardTitle>
 
                 <CardDescription>
-                  {grupo.reunioes ?? 'Não informado'}
+                  {grupo.reunioes && grupo.reunioes !== ''
+                    ? grupo.reunioes
+                    : 'Não informado'}
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -167,17 +169,23 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <Separator className="my-3" />
                 <span className="font-semibold">Ano de fundação</span>
                 <span className="text-muted-foreground">
-                  {grupo.anoFundacao ?? 'Não informado'}
+                  {grupo.anoFundacao && grupo.anoFundacao !== ''
+                    ? grupo.anoFundacao
+                    : 'Não informado'}
                 </span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Biografia</span>
                 <span className="text-muted-foreground">
-                  {grupo.biografia ?? 'Não informado'}
+                  {grupo.biografia && grupo.biografia !== ''
+                    ? grupo.biografia
+                    : 'Não informado'}
                 </span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Observações</span>
                 <span className="text-muted-foreground">
-                  {grupo.observacoes ?? 'Não informado'}
+                  {grupo.observacoes && grupo.observacoes !== ''
+                    ? grupo.observacoes
+                    : 'Não informado'}
                 </span>
               </CardContent>
             </Card>

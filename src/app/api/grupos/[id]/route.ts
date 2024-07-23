@@ -55,6 +55,15 @@ export async function PUT(
     // Valide os dados usando o schema Zod
     const parsedData = formSchema.parse(body)
 
+    // Remova todos os coordenadores e redes sociais associados ao grupo
+    await prisma.coordenador.deleteMany({
+      where: { grupoId: id },
+    })
+
+    await prisma.redeSocial.deleteMany({
+      where: { grupoId: id },
+    })
+
     // Atualize o grupo no banco de dados
     const grupo = await prisma.grupo.update({
       where: {
@@ -113,6 +122,7 @@ export async function PUT(
     return NextResponse.json(grupo)
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(error)
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
         { status: 400 },
@@ -121,6 +131,61 @@ export async function PUT(
     if (error instanceof Error) {
       return NextResponse.json(
         { error: 'Erro ao atualizar grupo', details: error.message },
+        { status: 500 },
+      )
+    }
+    return NextResponse.json({ error: 'Erro desconhecido' }, { status: 500 })
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const { id } = params
+
+  try {
+    // Verifica se o grupo existe
+    const grupo = await prisma.grupo.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    if (!grupo) {
+      return NextResponse.json(
+        { error: 'Grupo não encontrado' },
+        { status: 404 },
+      )
+    }
+
+    // Remove os coordenadores associados
+    await prisma.coordenador.deleteMany({
+      where: { grupoId: id },
+    })
+
+    // Remove as redes sociais associadas
+    await prisma.redeSocial.deleteMany({
+      where: { grupoId: id },
+    })
+
+    // Remove as atas associadas
+    await prisma.ata.deleteMany({
+      where: { grupoId: id },
+    })
+
+    // Remove o grupo
+    await prisma.grupo.delete({
+      where: {
+        id,
+      },
+    })
+
+    return NextResponse.json({ message: 'Grupo excluído com sucesso' })
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: 'Erro ao excluir grupo', details: error.message },
         { status: 500 },
       )
     }

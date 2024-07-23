@@ -14,6 +14,7 @@ export const formSchema = z.object({
   coordenadores: z
     .array(
       z.object({
+        id: z.string().optional(),
         nome: z.string({ message: 'Campo obrigatório' }).min(3, {
           message: 'O nome do coordenador deve ter pelo menos 3 caracteres.',
         }),
@@ -28,6 +29,7 @@ export const formSchema = z.object({
   redesSociais: z
     .array(
       z.object({
+        id: z.string().optional(),
         rede: z.enum(['Facebook', 'Instagram'], {
           required_error: 'Selecione uma rede social.',
         }),

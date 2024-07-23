@@ -76,7 +76,7 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn('nome')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="mr-3 max-w-sm"
         />
 
         <Button className="ml-auto" onClick={() => router.push('/grupos/novo')}>
@@ -138,7 +138,7 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>{' '}
+      </div>
       <DataTablePagination table={table} />
     </div>
   )

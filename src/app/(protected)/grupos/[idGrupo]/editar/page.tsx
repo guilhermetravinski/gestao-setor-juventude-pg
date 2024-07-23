@@ -26,7 +26,7 @@ export default async function EditarGrupoPage({ params }: GrupoPageProps) {
         <h1 className="mr-auto text-3xl font-semibold">Editar grupo</h1>
       </div>
       <div className="mx-auto w-full max-w-lg items-start gap-6">
-        <GrupoForm defaultValues={grupo} />
+        <GrupoForm defaultValues={grupo} mode="update" />
       </div>
     </main>
   )
