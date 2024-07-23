@@ -26,9 +26,9 @@ export async function POST(request: NextRequest) {
         jovesAtivos: parsedData.jovesAtivos,
         reunioes: parsedData.reunioes,
         observacoes: parsedData.observacoes,
-        coordenadores: parsedData.coordenacao
+        coordenadores: parsedData.coordenadores
           ? {
-              create: parsedData.coordenacao.map((coordenador) => ({
+              create: parsedData.coordenadores.map((coordenador) => ({
                 nome: coordenador.nome,
                 telefone: coordenador.telefone,
               })),

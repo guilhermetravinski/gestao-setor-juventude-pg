@@ -32,7 +32,7 @@ export interface Grupo {
   coordenadores: Coordenador[]
   redesSociais: RedeSocial[]
   atas: Ata[]
-  jovesAtivos: string
+  jovesAtivos: 'Até 20 jovens' | 'Entre 20 e 50 jovens' | 'Mais de 50 jovens'
   reunioes?: string
   observacoes?: string
   createdAt: Date

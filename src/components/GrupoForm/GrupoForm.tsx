@@ -29,23 +29,38 @@ import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { setores } from '@/data/setores'
+import { Grupo } from '@/lib/definitions'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
-export function GrupoForm() {
+interface GrupoFormProps {
+  defaultValues?: Grupo
+  mode: 'new' | 'update'
+}
+
+export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
   const form = useForm<FormSchemaType>({
     mode: 'all',
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: '',
-      comunidade: '',
+      nome: defaultValues?.nome ?? '',
+      comunidade: defaultValues?.comunidade ?? '',
+      anoFundacao: defaultValues?.anoFundacao ?? '',
+      biografia: defaultValues?.biografia ?? '',
+      coordenadores: defaultValues?.coordenadores ?? [],
+      jovesAtivos: defaultValues?.jovesAtivos,
+      observacoes: defaultValues?.observacoes ?? '',
+      paroquia: defaultValues?.paroquia,
+      redesSociais: defaultValues?.redesSociais ?? [],
+      reunioes: defaultValues?.reunioes ?? '',
+      setor: defaultValues?.setor,
     },
   })
   const { toast } = useToast()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'coordenacao',
+    name: 'coordenadores',
   })
 
   const {
@@ -75,8 +90,9 @@ export function GrupoForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch('/api/grupos', {
-        method: 'POST',
+      const url = mode === 'new'? '/api/grupos' : `/api/grupos/${}`
+      const response = await fetch(`/api/grupos`, {
+        method: mode === 'new' ? 'POST' : 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -146,6 +162,7 @@ export function GrupoForm() {
               </FormLabel>
               <FormControl>
                 <Select
+                  value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value)
                     setSelectedSetor(value)
@@ -179,7 +196,7 @@ export function GrupoForm() {
                 Paróquia <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma paróquia" />
                   </SelectTrigger>
@@ -219,7 +236,7 @@ export function GrupoForm() {
             <FormItem>
               <FormLabel>Ano de fundação</FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o ano de fundação" />
                   </SelectTrigger>
@@ -264,7 +281,7 @@ export function GrupoForm() {
               <div className="mr-6 flex flex-1 flex-col gap-4">
                 <FormField
                   control={form.control}
-                  name={`coordenacao.${index}.nome`}
+                  name={`coordenadores.${index}.nome`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -277,7 +294,7 @@ export function GrupoForm() {
 
                 <FormField
                   control={form.control}
-                  name={`coordenacao.${index}.telefone`}
+                  name={`coordenadores.${index}.telefone`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -391,7 +408,7 @@ export function GrupoForm() {
                 Jovens ativos <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma opção" />
                   </SelectTrigger>
@@ -444,12 +461,7 @@ export function GrupoForm() {
           <span className="mb-3 text-xs text-rose-500">
             * Campos obrigatórios
           </span>
-          <Button
-            type="submit"
-            disabled={!form.formState.isValid || form.formState.isSubmitting}
-          >
-            Salvar grupo
-          </Button>
+          <Button type="submit">Salvar grupo</Button>
         </div>
       </form>
     </Form>

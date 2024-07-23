@@ -1,5 +1,6 @@
 import { File, Pencil, Plus } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -21,7 +22,7 @@ interface GrupoPageProps {
   params: { idGrupo: string }
 }
 
-async function getGrupoById(id: string) {
+export async function getGrupoById(id: string) {
   const res = await fetch(`http://localhost:3000/api/grupos/${id}`, {
     cache: 'no-store',
   })
@@ -41,10 +42,13 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
       <div className="mx-auto flex w-full max-w-6xl gap-2">
         <h1 className="mr-auto text-3xl font-semibold">{grupo.nome}</h1>
-        <Button size="sm" variant="outline">
-          <Pencil className="mr-2 h-4 w-4" />
-          Editar
-        </Button>
+
+        <Link href={`/grupos/${idGrupo}/editar`} passHref>
+          <Button size="sm" variant="outline">
+            <Pencil className="mr-2 h-4 w-4" />
+            Editar
+          </Button>
+        </Link>
       </div>
       <div className="mx-auto w-full max-w-6xl items-start gap-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

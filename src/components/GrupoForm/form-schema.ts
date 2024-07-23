@@ -11,7 +11,7 @@ export const formSchema = z.object({
     },
   ),
   reunioes: z.string().optional(),
-  coordenacao: z
+  coordenadores: z
     .array(
       z.object({
         nome: z.string({ message: 'Campo obrigatório' }).min(3, {
