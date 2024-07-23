@@ -21,7 +21,7 @@ import { DataTable } from './DataTable/data-table'
 // }
 
 async function getGrupos() {
-  const res = await fetch('http://localhost:3000/api/grupos', {
+  const res = await fetch('/api/grupos', {
     cache: 'no-store',
   })
   if (!res.ok) {
