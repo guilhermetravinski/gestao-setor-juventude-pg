@@ -22,8 +22,10 @@ interface GrupoPageProps {
   params: { idGrupo: string }
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+
 async function getGrupoById(id: string) {
-  const res = await fetch(`/api/grupos/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/grupos/${id}`, {
     cache: 'no-store',
   })
 

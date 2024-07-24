@@ -19,9 +19,10 @@ import { DataTable } from './DataTable/data-table'
 //     },
 //   ]
 // }
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 async function getGrupos() {
-  const res = await fetch('/api/grupos', {
+  const res = await fetch(`${API_BASE_URL}/api/grupos`, {
     cache: 'no-store',
   })
   if (!res.ok) {

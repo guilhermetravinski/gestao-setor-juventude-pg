@@ -29,10 +29,12 @@ export function DeleteGrupoDialog({ grupoId }: DeleteGrupoDialogProps) {
     if (isOpen) setIsDeleting(false)
   }, [isOpen])
 
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      const response = await fetch(`/api/grupos/${grupoId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/grupos/${grupoId}`, {
         method: 'DELETE',
       })
 

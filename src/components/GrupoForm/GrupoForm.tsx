@@ -88,10 +88,14 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
     }
   }, [selectedSetor])
 
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const url =
-        mode === 'new' ? '/api/grupos' : `/api/grupos/${defaultValues?.id}`
+        mode === 'new'
+          ? `${API_BASE_URL}/api/grupos`
+          : `${API_BASE_URL}/api/grupos/${defaultValues?.id}`
       const response = await fetch(url, {
         method: mode === 'new' ? 'POST' : 'PUT',
         headers: {
