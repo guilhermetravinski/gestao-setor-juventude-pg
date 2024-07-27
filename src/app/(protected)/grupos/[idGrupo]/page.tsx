@@ -17,6 +17,7 @@ import { getInitials } from '@/lib/utils'
 import facebookLogo from '../../../../../public/facebook.svg'
 import instagramLogo from '../../../../../public/instagram.svg'
 import { Grupo } from '../../../../lib/definitions'
+import { DialogNovaAta } from './atas/DialogNovaAta'
 
 interface GrupoPageProps {
   params: { idGrupo: string }
@@ -137,10 +138,9 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
               <CardHeader className="flex flex-row space-y-0">
                 <CardTitle>Atas</CardTitle>
 
-                <Button size="sm" className="ml-auto">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nova ata
-                </Button>
+                <DialogNovaAta />
+
+           
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col items-center justify-center">
