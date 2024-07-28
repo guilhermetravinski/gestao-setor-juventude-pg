@@ -5,7 +5,6 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -57,10 +56,6 @@ export function FormEvento({ setOpen, mode, defaultValues }: FormEventoProps) {
       descricao: defaultValues?.descricao,
     },
   })
-
-  useEffect(() => {
-    console.log(defaultValues?.data)
-  }, [])
 
   const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
