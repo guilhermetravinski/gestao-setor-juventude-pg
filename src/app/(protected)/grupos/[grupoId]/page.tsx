@@ -1,4 +1,4 @@
-import { File, Pencil, Plus } from 'lucide-react'
+import { File, Pencil } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -11,16 +11,18 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { getInitials } from '@/lib/utils'
 
 import facebookLogo from '../../../../../public/facebook.svg'
 import instagramLogo from '../../../../../public/instagram.svg'
-import { Grupo } from '../../../../lib/definitions'
+import { Ata, Grupo } from '../../../../lib/definitions'
+import { CardAta } from './atas/CardAta'
 import { DialogNovaAta } from './atas/DialogNovaAta'
 
 interface GrupoPageProps {
-  params: { idGrupo: string }
+  params: { grupoId: string }
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
@@ -38,15 +40,29 @@ async function getGrupoById(id: string) {
   return res.json()
 }
 
+async function getAtasById(id: string) {
+  const res = await fetch(`${API_BASE_URL}/api/grupos/${id}/atas`, {
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    console.log(res)
+    throw new Error('Erro ao buscar atas')
+  }
+
+  return res.json()
+}
+
 export default async function GrupoPage({ params }: GrupoPageProps) {
-  const { idGrupo } = params
-  const grupo = (await getGrupoById(idGrupo)) as Grupo
+  const { grupoId } = params
+  const grupo = (await getGrupoById(grupoId)) as Grupo
+  const atas = (await getAtasById(grupoId)) as Ata[]
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
       <div className="mx-auto flex w-full max-w-6xl gap-2">
         <h1 className="mr-auto text-3xl font-semibold">{grupo.nome}</h1>
 
-        <Link href={`/grupos/${idGrupo}/editar`} passHref>
+        <Link href={`/grupos/${grupoId}/editar`} passHref>
           <Button size="sm" variant="outline">
             <Pencil className="mr-2 h-4 w-4" />
             Editar
@@ -137,18 +153,27 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
             <Card className="col-span-1 md:col-span-2">
               <CardHeader className="flex flex-row space-y-0">
                 <CardTitle>Atas</CardTitle>
-
                 <DialogNovaAta />
-
-           
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center justify-center">
-                  <File className="h-16 w-16 text-muted-foreground" />
-                  <span className="mt-4 text-muted-foreground">
-                    Ainda não há atas
-                  </span>
-                </div>
+                {atas.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <File className="h-16 w-16 text-muted-foreground" />
+                    <span className="mt-4 text-muted-foreground">
+                      Ainda não há atas
+                    </span>
+                  </div>
+                ) : (
+                  <ScrollArea className="h-[300px] rounded-md border p-4">
+                    {atas.map((ata, index) => (
+                      <CardAta
+                        key={index}
+                        ata={ata}
+                        lastItem={index >= atas.length - 1}
+                      />
+                    ))}
+                  </ScrollArea>
+                )}
               </CardContent>
             </Card>
           </div>

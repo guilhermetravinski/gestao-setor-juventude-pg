@@ -1,7 +1,7 @@
 'use client'
 
 import { Trash } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import {
@@ -15,15 +15,18 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
 
-interface DeleteGrupoDialogProps {
-  grupoId: string
+interface DeleteAtaDialogProps {
+  ataId: string
 }
 
-export function DeleteGrupoDialog({ grupoId }: DeleteGrupoDialogProps) {
+export function DeleteAtaDialog({ ataId }: DeleteAtaDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const router = useRouter()
+  const { grupoId } = useParams()
+  const { toast } = useToast()
 
   useEffect(() => {
     if (isOpen) setIsDeleting(false)
@@ -34,19 +37,37 @@ export function DeleteGrupoDialog({ grupoId }: DeleteGrupoDialogProps) {
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/grupos/${grupoId}`, {
-        method: 'DELETE',
-      })
+      const response = await fetch(
+        `${API_BASE_URL}/api/grupos/${grupoId}/atas/${ataId}`,
+        {
+          method: 'DELETE',
+        },
+      )
 
-      if (!response.ok) {
-        throw new Error('Erro ao deletar o grupo')
+      if (response.ok) {
+        toast({
+          variant: 'success',
+          title: `Ata excluída com sucesso`,
+          duration: 3000,
+        })
+        router.push(`/grupos/${grupoId}`)
+        router.refresh()
+
+        setIsOpen(false)
+      } else {
+        toast({
+          variant: 'destructive',
+          title: `Erro ao deletar ata`,
+
+          duration: 3000,
+        })
       }
-
-      router.push('/grupos')
-      router.refresh()
-      setIsOpen(false)
     } catch (error) {
-      console.error('Erro ao deletar o grupo:', error)
+      toast({
+        variant: 'destructive',
+        title: `Erro ao deletar ata`,
+        duration: 3000,
+      })
       setIsDeleting(false)
     }
   }
@@ -60,10 +81,10 @@ export function DeleteGrupoDialog({ grupoId }: DeleteGrupoDialogProps) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Deseja remover o grupo?</AlertDialogTitle>
+          <AlertDialogTitle>Deseja remover ata?</AlertDialogTitle>
           <AlertDialogDescription>
-            Essa ação não pode ser desfeita. Isso excluirá permanentemente o
-            grupo e removerá seus dados do servidor.
+            Essa ação não pode ser desfeita. Isso excluirá permanentemente a ata
+            e removerá seus dados do servidor.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

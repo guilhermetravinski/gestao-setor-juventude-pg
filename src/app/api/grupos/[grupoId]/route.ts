@@ -9,14 +9,14 @@ const prisma = new PrismaClient()
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { grupoId: string } },
 ) {
-  const { id } = params
+  const { grupoId } = params
 
   try {
     const grupo = await prisma.grupo.findUnique({
       where: {
-        id,
+        id: grupoId,
       },
       include: {
         coordenadores: true,
@@ -45,9 +45,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { grupoId: string } },
 ) {
-  const { id } = params
+  const { grupoId } = params
 
   try {
     const body = await request.json()
@@ -57,17 +57,17 @@ export async function PUT(
 
     // Remova todos os coordenadores e redes sociais associados ao grupo
     await prisma.coordenador.deleteMany({
-      where: { grupoId: id },
+      where: { grupoId },
     })
 
     await prisma.redeSocial.deleteMany({
-      where: { grupoId: id },
+      where: { grupoId },
     })
 
     // Atualize o grupo no banco de dados
     const grupo = await prisma.grupo.update({
       where: {
-        id,
+        id: grupoId,
       },
       data: {
         ...parsedData,
