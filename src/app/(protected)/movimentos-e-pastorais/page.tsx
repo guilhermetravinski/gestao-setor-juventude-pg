@@ -3,25 +3,20 @@ import { Card, CardContent } from '@/components/ui/card'
 import { columns, GrupoJovens } from '../grupos/DataTable/columns'
 import { DataTable } from '../grupos/DataTable/data-table'
 
-async function getGrupos(): Promise<GrupoJovens[]> {
-  return [
-    {
-      id: '728ed52f',
-      nome: 'Juventude Bom Jesus',
-      setor: '3',
-      paroquia: 'Bom Jesus',
-    },
-    {
-      id: '728ed52a',
-      nome: 'JOFF',
-      setor: '3',
-      paroquia: 'Bom Jesus',
-    },
-  ]
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+
+async function getMovimentosPastorais() {
+  const res = await fetch(`${API_BASE_URL}/api/grupos`, {
+    cache: 'no-store',
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao buscar grupos')
+  }
+  return res.json()
 }
 
 export default async function MovimentosEPastoraisPage() {
-  const grupos = await getGrupos()
+  const movimentosPastorais = await getMovimentosPastorais()
   return (
     <main className="flex flex-1 flex-col gap-8 bg-muted/40 p-10">
       <div className="mx-auto w-full max-w-6xl">
@@ -30,7 +25,7 @@ export default async function MovimentosEPastoraisPage() {
       <div className="mx-auto w-full max-w-6xl">
         <Card>
           <CardContent>
-            <DataTable columns={columns} data={grupos} />
+            <DataTable columns={columns} data={movimentosPastorais} />
           </CardContent>
         </Card>
       </div>

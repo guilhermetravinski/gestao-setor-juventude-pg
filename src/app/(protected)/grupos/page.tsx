@@ -3,22 +3,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { columns } from './DataTable/columns'
 import { DataTable } from './DataTable/data-table'
 
-// async function getGrupos(): Promise<GrupoJovens[]> {
-//   return [
-//     {
-//       id: '728ed52f',
-//       nome: 'Juventude Bom Jesus',
-//       setor: '3',
-//       paroquia: 'Bom Jesus',
-//     },
-//     {
-//       id: '728ed52a',
-//       nome: 'JOFF',
-//       setor: '3',
-//       paroquia: 'Bom Jesus',
-//     },
-//   ]
-// }
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 async function getGrupos() {

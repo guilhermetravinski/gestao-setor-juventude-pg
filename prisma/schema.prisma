@@ -1,7 +1,7 @@
 // schema.prisma
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
@@ -10,29 +10,35 @@ generator client {
 }
 
 model Coordenador {
-  id        String   @id @default(uuid())
-  nome      String
-  telefone  String
-  grupoId   String?  @unique
-  grupo     Grupo?   @relation(fields: [grupoId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String             @id @default(uuid())
+  nome                String
+  telefone            String
+  grupoId             String?            @unique
+  grupo               Grupo?             @relation(fields: [grupoId], references: [id])
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  MovimentoPastoral   MovimentoPastoral? @relation(fields: [movimentoPastoralId], references: [id])
+  movimentoPastoralId String?
 }
 
 model RedeSocial {
-  id          String  @id @default(uuid())
-  rede        String
-  nomeUsuario String
-  grupoId     String?
-  grupo       Grupo?  @relation(fields: [grupoId], references: [id])
+  id                  String             @id @default(uuid())
+  rede                String
+  nomeUsuario         String
+  grupoId             String?
+  grupo               Grupo?             @relation(fields: [grupoId], references: [id])
+  MovimentoPastoral   MovimentoPastoral? @relation(fields: [movimentoPastoralId], references: [id])
+  movimentoPastoralId String?
 }
 
 model Ata {
-  id        String   @id @default(uuid())
-  data      DateTime
-  descricao String
-  grupoId   String
-  grupo     Grupo    @relation(fields: [grupoId], references: [id])
+  id                  String             @id @default(uuid())
+  data                DateTime
+  descricao           String
+  grupoId             String
+  grupo               Grupo              @relation(fields: [grupoId], references: [id])
+  MovimentoPastoral   MovimentoPastoral? @relation(fields: [movimentoPastoralId], references: [id])
+  movimentoPastoralId String?
 }
 
 model Grupo {
@@ -48,6 +54,24 @@ model Grupo {
   atas          Ata[]
   jovesAtivos   String
   reunioes      String?
+  observacoes   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model MovimentoPastoral {
+  id            String        @id @default(uuid())
+  nome          String
+  localAtuacao  String
+  tipo          String
+  anoFundacao   String?
+  carisma       String?
+  biografia     String?
+  coordenadores Coordenador[]
+  redesSociais  RedeSocial[]
+  atas          Ata[]
+  jovesAtivos   String
+  atividades    String?
   observacoes   String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
