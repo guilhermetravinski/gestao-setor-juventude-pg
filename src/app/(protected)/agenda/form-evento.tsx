@@ -58,7 +58,6 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
   async function onSubmit(values: EventFormData) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
 
     await new Promise((resolve) => setTimeout(resolve, 1000))
     const novoEvento: Evento = {

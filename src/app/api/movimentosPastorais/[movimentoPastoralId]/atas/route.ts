@@ -63,7 +63,6 @@ export async function POST(
       )
     }
     if (error instanceof Error) {
-      console.log(error)
       return NextResponse.json(
         { error: 'Erro ao criar ata', details: error.message },
         { status: 500 },

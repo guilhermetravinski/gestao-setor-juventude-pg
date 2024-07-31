@@ -97,7 +97,7 @@ export function MovimentoPastoralForm({
       if (response.ok) {
         toast({
           variant: 'success',
-          title: `Grupo ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,
+          title: `Movimento ou pastoral ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,
           duration: 3000,
         })
         const redirectUrl =
@@ -110,7 +110,7 @@ export function MovimentoPastoralForm({
         const errorData = await response.json()
         toast({
           variant: 'destructive',
-          title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
+          title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} movimento ou pastoral`,
           description: errorData.error,
           duration: 3000,
         })
@@ -118,7 +118,7 @@ export function MovimentoPastoralForm({
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
+        title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} movimento ou pastoral`,
         duration: 3000,
       })
     }

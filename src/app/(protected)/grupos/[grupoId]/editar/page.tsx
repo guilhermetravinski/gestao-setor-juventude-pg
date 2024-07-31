@@ -10,7 +10,6 @@ async function getGrupoById(id: string) {
   })
 
   if (!res.ok) {
-    console.log(res)
     throw new Error('Erro ao buscar grupo')
   }
 

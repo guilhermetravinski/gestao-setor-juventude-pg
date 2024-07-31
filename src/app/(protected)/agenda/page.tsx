@@ -1,7 +1,7 @@
 'use client'
 
 import { File, Trash } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DateRange } from 'react-day-picker'
 
 import { Button } from '@/components/ui/button'
@@ -29,8 +29,6 @@ export default function AgendaPage() {
       descricao: 'Evento do grupo de jovens',
     },
   ])
-
-  useEffect(() => console.log(date), [date])
 
   function handleRemoveEvento(removeEvento: Evento) {
     setEventos((prevEventos) =>

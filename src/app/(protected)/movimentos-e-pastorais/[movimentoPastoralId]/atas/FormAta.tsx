@@ -60,8 +60,6 @@ export function FormEvento({ setOpen, mode, defaultValues }: FormEventoProps) {
   const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
   async function onSubmit(values: AtaFormData) {
-    console.log(values)
-
     try {
       const body = {
         data: values.data,

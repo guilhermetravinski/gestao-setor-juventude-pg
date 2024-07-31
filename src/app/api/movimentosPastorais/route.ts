@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
 
     // Valide os dados usando o schema Zod
     const parsedData = formSchema.parse(body)
-    console.log(parsedData)
     // Crie o grupo no banco de dados
     const grupo = await prisma.movimentoPastoral.create({
       data: {
@@ -48,14 +47,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(grupo)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error)
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
         { status: 400 },
       )
     }
     if (error instanceof Error) {
-      console.log(error)
       return NextResponse.json(
         { error: 'Erro ao criar grupo', details: error.message },
         { status: 500 },
@@ -70,7 +67,6 @@ export async function GET() {
     const grupos = await prisma.movimentoPastoral.findMany()
     return NextResponse.json(grupos)
   } catch (error) {
-    console.log(error)
     return NextResponse.json({ error: 'Erro ao obter grupos' }, { status: 500 })
   }
 }

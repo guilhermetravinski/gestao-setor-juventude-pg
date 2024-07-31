@@ -122,7 +122,6 @@ export async function PUT(
     return NextResponse.json(grupo)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error)
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
         { status: 400 },

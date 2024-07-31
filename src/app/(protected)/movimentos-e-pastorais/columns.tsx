@@ -5,7 +5,7 @@ import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 
 import { DataTableColumnHeader } from '@/components/DataTable/data-table-column-header'
-import { DeleteGrupoDialog } from '@/components/DeleteGrupoDialog'
+import { DeleteMovimentoPastoralDialog } from '@/components/DeleteMovimentoPastoralDialog'
 import { Button } from '@/components/ui/button'
 import { MovimentoPastoral } from '@/lib/definitions'
 
@@ -45,7 +45,9 @@ export const columns: ColumnDef<MovimentoPastoral>[] = [
               <ExternalLink className="h-4 w-4" />
             </Button>
           </Link>
-          <DeleteGrupoDialog grupoId={row.original.id} />
+          <DeleteMovimentoPastoralDialog
+            movimentoPastoralId={row.original.id}
+          />
         </div>
       )
     },
