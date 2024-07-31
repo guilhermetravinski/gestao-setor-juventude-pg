@@ -1,7 +1,7 @@
+import { DataTable } from '@/components/DataTable/data-table'
 import { Card, CardContent } from '@/components/ui/card'
 
-import { columns } from './DataTable/columns'
-import { DataTable } from './DataTable/data-table'
+import { columns } from './columns'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -25,7 +25,11 @@ export default async function GruposPage() {
       <div className="mx-auto w-full max-w-6xl">
         <Card>
           <CardContent>
-            <DataTable columns={columns} data={grupos} />
+            <DataTable
+              columns={columns}
+              data={grupos}
+              novoRegistroPath="/grupos/novo"
+            />
           </CardContent>
         </Card>
       </div>

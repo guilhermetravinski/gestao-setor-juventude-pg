@@ -17,52 +17,48 @@ import { getInitials } from '@/lib/utils'
 
 import facebookLogo from '../../../../../public/facebook.svg'
 import instagramLogo from '../../../../../public/instagram.svg'
-import { Ata, Grupo } from '../../../../lib/definitions'
+import { MovimentoPastoral } from '../../../../lib/definitions'
 import { CardAta } from './atas/CardAta'
 import { DialogNovaAta } from './atas/DialogNovaAta'
 
 interface GrupoPageProps {
-  params: { grupoId: string }
+  params: { movimentoPastoralId: string }
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 async function getGrupoById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/api/grupos/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/movimentosPastorais/${id}`, {
     cache: 'no-store',
   })
 
   if (!res.ok) {
     console.log(res)
-    throw new Error('Erro ao buscar grupo')
-  }
-
-  return res.json()
-}
-
-async function getAtasById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/api/grupos/${id}/atas`, {
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    console.log(res)
-    throw new Error('Erro ao buscar atas')
+    throw new Error('Erro ao buscar movimento ou pastoral')
   }
 
   return res.json()
 }
 
 export default async function GrupoPage({ params }: GrupoPageProps) {
-  const { grupoId } = params
-  const grupo = (await getGrupoById(grupoId)) as Grupo
-  const atas = (await getAtasById(grupoId)) as Ata[]
+  const { movimentoPastoralId } = params
+  const movimentoPastoral = (await getGrupoById(
+    movimentoPastoralId,
+  )) as MovimentoPastoral
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
       <div className="mx-auto flex w-full max-w-6xl gap-2">
-        <h1 className="mr-auto text-3xl font-semibold">{grupo.nome}</h1>
+        <div className="mr-auto">
+          <h1 className="text-3xl font-semibold">{movimentoPastoral.nome}</h1>
+          <h2 className="text-lg text-muted-foreground">
+            {movimentoPastoral.tipo}
+          </h2>
+        </div>
 
-        <Link href={`/grupos/${grupoId}/editar`} passHref>
+        <Link
+          href={`/movimentos-e-pastorais/${movimentoPastoralId}/editar`}
+          passHref
+        >
           <Button size="sm" variant="outline">
             <Pencil className="mr-2 h-4 w-4" />
             Editar
@@ -75,17 +71,20 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Jovens ativos</CardTitle>
-                <CardDescription>{grupo.jovensAtivos}</CardDescription>
+                <CardDescription>
+                  {movimentoPastoral.jovensAtivos}
+                </CardDescription>
               </CardHeader>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Reuniões</CardTitle>
+                <CardTitle>Atividades</CardTitle>
 
                 <CardDescription>
-                  {grupo.reunioes && grupo.reunioes !== ''
-                    ? grupo.reunioes
+                  {movimentoPastoral.atividades &&
+                  movimentoPastoral.atividades !== ''
+                    ? movimentoPastoral.atividades
                     : 'Não informado'}
                 </CardDescription>
               </CardHeader>
@@ -97,8 +96,8 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <CardTitle>Redes Sociais</CardTitle>
               </CardHeader>
               <CardContent>
-                {grupo.redesSociais.length > 0 ? (
-                  grupo.redesSociais.map((redeSocial, index) => (
+                {movimentoPastoral.redesSociais.length > 0 ? (
+                  movimentoPastoral.redesSociais.map((redeSocial, index) => (
                     <div className="flex gap-3" key={index}>
                       <Image
                         src={
@@ -126,8 +125,8 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <CardTitle>Coordenação</CardTitle>
               </CardHeader>
               <CardContent>
-                {grupo.coordenadores.length > 0 ? (
-                  grupo.coordenadores.map((coordenador, index) => (
+                {movimentoPastoral.coordenadores.length > 0 ? (
+                  movimentoPastoral.coordenadores.map((coordenador, index) => (
                     <div className="flex gap-3" key={index}>
                       <Avatar>
                         <AvatarImage src="" alt="" />
@@ -156,7 +155,7 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <DialogNovaAta />
               </CardHeader>
               <CardContent>
-                {atas.length === 0 ? (
+                {movimentoPastoral.atas.length === 0 ? (
                   <div className="flex flex-col items-center justify-center">
                     <File className="h-16 w-16 text-muted-foreground" />
                     <span className="mt-4 text-muted-foreground">
@@ -165,11 +164,11 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                   </div>
                 ) : (
                   <ScrollArea className="h-[300px] rounded-md border p-4">
-                    {atas.map((ata, index) => (
+                    {movimentoPastoral.atas.map((ata, index) => (
                       <CardAta
                         key={index}
                         ata={ata}
-                        lastItem={index >= atas.length - 1}
+                        lastItem={index >= movimentoPastoral.atas.length - 1}
                       />
                     ))}
                   </ScrollArea>
@@ -183,35 +182,39 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 <CardTitle>História</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col">
-                <span className="font-semibold">Setor</span>
-                <span className="text-muted-foreground">{grupo.setor}</span>
-                <Separator className="my-3" />
-                <span className="font-semibold">Paróquia</span>
-                <span className="text-muted-foreground">{grupo.paroquia}</span>
-                <Separator className="my-3" />
-                <span className="font-semibold">Comunidade</span>
+                <span className="font-semibold">Carisma</span>
                 <span className="text-muted-foreground">
-                  {grupo.comunidade}
+                  {movimentoPastoral.carisma && movimentoPastoral.carisma !== ''
+                    ? movimentoPastoral.carisma
+                    : 'Não informado'}
+                </span>
+                <Separator className="my-3" />
+                <span className="font-semibold">Local de atuação</span>
+                <span className="text-muted-foreground">
+                  {movimentoPastoral.localAtuacao}
                 </span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Ano de fundação</span>
                 <span className="text-muted-foreground">
-                  {grupo.anoFundacao && grupo.anoFundacao !== ''
-                    ? grupo.anoFundacao
+                  {movimentoPastoral.anoFundacao &&
+                  movimentoPastoral.anoFundacao !== ''
+                    ? movimentoPastoral.anoFundacao
                     : 'Não informado'}
                 </span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Biografia</span>
                 <span className="text-muted-foreground">
-                  {grupo.biografia && grupo.biografia !== ''
-                    ? grupo.biografia
+                  {movimentoPastoral.biografia &&
+                  movimentoPastoral.biografia !== ''
+                    ? movimentoPastoral.biografia
                     : 'Não informado'}
                 </span>
                 <Separator className="my-3" />
                 <span className="font-semibold">Observações</span>
                 <span className="text-muted-foreground">
-                  {grupo.observacoes && grupo.observacoes !== ''
-                    ? grupo.observacoes
+                  {movimentoPastoral.observacoes &&
+                  movimentoPastoral.observacoes !== ''
+                    ? movimentoPastoral.observacoes
                     : 'Não informado'}
                 </span>
               </CardContent>

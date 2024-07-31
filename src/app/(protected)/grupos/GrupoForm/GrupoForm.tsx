@@ -48,10 +48,10 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
       anoFundacao: defaultValues?.anoFundacao ?? '',
       biografia: defaultValues?.biografia ?? '',
       coordenadores: defaultValues?.coordenadores ?? [],
-      jovesAtivos: defaultValues?.jovesAtivos,
+      redesSociais: defaultValues?.redesSociais ?? [],
+      jovensAtivos: defaultValues?.jovensAtivos,
       observacoes: defaultValues?.observacoes ?? '',
       paroquia: defaultValues?.paroquia,
-      redesSociais: defaultValues?.redesSociais ?? [],
       reunioes: defaultValues?.reunioes ?? '',
       setor: defaultValues?.setor,
     },
@@ -110,7 +110,9 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
           title: `Grupo ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,
           duration: 3000,
         })
-        router.push('/grupos')
+        const redirectUrl =
+          mode === 'new' ? '/grupos' : `/grupos/${defaultValues?.id}`
+        router.push(redirectUrl)
         router.refresh()
       } else {
         const errorData = await response.json()
@@ -425,7 +427,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         </div>
         <FormField
           control={form.control}
-          name="jovesAtivos"
+          name="jovensAtivos"
           render={({ field }) => (
             <FormItem>
               <FormLabel>

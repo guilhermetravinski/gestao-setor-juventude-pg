@@ -1,5 +1,6 @@
-import { GrupoForm } from '@/components/GrupoForm/GrupoForm'
 import { Grupo } from '@/lib/definitions'
+
+import { GrupoForm } from '../../GrupoForm/GrupoForm'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 

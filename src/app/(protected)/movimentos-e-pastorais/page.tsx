@@ -1,16 +1,16 @@
+import { DataTable } from '@/components/DataTable/data-table'
 import { Card, CardContent } from '@/components/ui/card'
 
-import { columns, GrupoJovens } from '../grupos/DataTable/columns'
-import { DataTable } from '../grupos/DataTable/data-table'
+import { columns } from './columns'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 async function getMovimentosPastorais() {
-  const res = await fetch(`${API_BASE_URL}/api/grupos`, {
+  const res = await fetch(`${API_BASE_URL}/api/movimentosPastorais`, {
     cache: 'no-store',
   })
   if (!res.ok) {
-    throw new Error('Erro ao buscar grupos')
+    throw new Error('Erro ao buscar movimentos e pastorais')
   }
   return res.json()
 }
@@ -25,7 +25,11 @@ export default async function MovimentosEPastoraisPage() {
       <div className="mx-auto w-full max-w-6xl">
         <Card>
           <CardContent>
-            <DataTable columns={columns} data={movimentosPastorais} />
+            <DataTable
+              columns={columns}
+              data={movimentosPastorais}
+              novoRegistroPath="/movimentos-e-pastorais/novo"
+            />
           </CardContent>
         </Card>
       </div>

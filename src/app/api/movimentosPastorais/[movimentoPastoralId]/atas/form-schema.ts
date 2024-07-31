@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const ataSchema = z.object({
   grupoId: z.string(),
+  movimentoPastoralId: z.string(),
   data: z.string(),
   descricao: z.string(),
 })

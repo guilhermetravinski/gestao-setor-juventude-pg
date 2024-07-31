@@ -32,8 +32,26 @@ export interface Grupo {
   coordenadores: Coordenador[]
   redesSociais: RedeSocial[]
   atas: Ata[]
-  jovesAtivos: 'Até 20 jovens' | 'Entre 20 e 50 jovens' | 'Mais de 50 jovens'
+  jovensAtivos: 'Até 20 jovens' | 'Entre 20 e 50 jovens' | 'Mais de 50 jovens'
   reunioes?: string
+  observacoes?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface MovimentoPastoral {
+  id: string
+  nome: string
+  localAtuacao: string
+  tipo: 'Movimento' | 'Pastoral'
+  anoFundacao?: string
+  carisma?: string
+  biografia?: string
+  coordenadores: Coordenador[]
+  redesSociais: RedeSocial[]
+  atas: Ata[]
+  jovensAtivos: 'Até 20 jovens' | 'Entre 20 e 50 jovens' | 'Mais de 50 jovens'
+  atividades?: string
   observacoes?: string
   createdAt: Date
   updatedAt: Date

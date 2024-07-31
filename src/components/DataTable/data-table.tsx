@@ -32,11 +32,13 @@ import { DataTablePagination } from './data-table-pagination'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  novoRegistroPath: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  novoRegistroPath,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -79,8 +81,11 @@ export function DataTable<TData, TValue>({
           className="mr-3 max-w-sm"
         />
 
-        <Button className="ml-auto" onClick={() => router.push('/grupos/novo')}>
-          <Plus className="mr-2 h-4 w-4" /> Novo grupo
+        <Button
+          className="ml-auto"
+          onClick={() => router.push(novoRegistroPath)}
+        >
+          <Plus className="mr-2 h-4 w-4" /> Adicionar
         </Button>
         <Button className="ml-3" variant="outline">
           <Filter className="mr-2 h-4 w-4" /> Filtrar

@@ -4,19 +4,12 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 
+import { DataTableColumnHeader } from '@/components/DataTable/data-table-column-header'
+import { DeleteGrupoDialog } from '@/components/DeleteGrupoDialog'
 import { Button } from '@/components/ui/button'
+import { Grupo } from '@/lib/definitions'
 
-import { DataTableColumnHeader } from './data-table-column-header'
-import { DeleteGrupoDialog } from './DeleteGrupoDialog'
-
-export type GrupoJovens = {
-  id: string
-  nome: string
-  setor: string
-  paroquia: string
-}
-
-export const columns: ColumnDef<GrupoJovens>[] = [
+export const columns: ColumnDef<Grupo>[] = [
   {
     accessorKey: 'nome',
     header: ({ column }) => (
@@ -45,8 +38,6 @@ export const columns: ColumnDef<GrupoJovens>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      // const payment = row.original
-
       return (
         <div className="flex gap-2">
           <Link href={`/grupos/${row.original.id}`} passHref>

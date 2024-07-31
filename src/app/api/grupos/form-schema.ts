@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 export const formSchema = z.object({
-  nome: z.string({ message: 'Campo obrigatório' }).min(3, {
-    message: 'O nome do grupo deve ter pelo menos 3 caracteres.',
+  nome: z.string({ message: 'Campo obrigatório' }).min(1, {
+    message: 'O nome do grupo deve ter pelo menos 1 caracter.',
   }),
-  jovesAtivos: z.enum(
+  jovensAtivos: z.enum(
     ['Até 20 jovens', 'Entre 20 e 50 jovens', 'Mais de 50 jovens'],
     {
       required_error: 'Selecione o número de jovens ativos.',

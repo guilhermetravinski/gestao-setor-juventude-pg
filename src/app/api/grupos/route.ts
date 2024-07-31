@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         comunidade: parsedData.comunidade,
         anoFundacao: parsedData.anoFundacao,
         biografia: parsedData.biografia,
-        jovesAtivos: parsedData.jovesAtivos,
+        jovensAtivos: parsedData.jovensAtivos,
         reunioes: parsedData.reunioes,
         observacoes: parsedData.observacoes,
         coordenadores: parsedData.coordenadores

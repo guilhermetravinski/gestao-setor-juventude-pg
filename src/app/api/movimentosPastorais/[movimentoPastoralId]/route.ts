@@ -9,33 +9,37 @@ const prisma = new PrismaClient()
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { grupoId: string } },
+  { params }: { params: { movimentoPastoralId: string } },
 ) {
-  const { grupoId } = params
+  const { movimentoPastoralId } = params
 
   try {
-    const grupo = await prisma.movimentoPastoral.findUnique({
+    const movimentoPastoral = await prisma.movimentoPastoral.findUnique({
       where: {
-        id: grupoId,
+        id: movimentoPastoralId,
       },
       include: {
         coordenadores: true,
         redesSociais: true,
+        atas: true,
       },
     })
 
-    if (!grupo) {
+    if (!movimentoPastoral) {
       return NextResponse.json(
-        { error: 'Grupo não encontrado' },
+        { error: 'Movimento ou pastoral não encontrado' },
         { status: 404 },
       )
     }
 
-    return NextResponse.json(grupo)
+    return NextResponse.json(movimentoPastoral)
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: 'Erro ao obter grupo', details: error.message },
+        {
+          error: 'Erro ao obter movimento ou pastoral',
+          details: error.message,
+        },
         { status: 500 },
       )
     }
@@ -45,9 +49,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { grupoId: string } },
+  { params }: { params: { movimentoPastoralId: string } },
 ) {
-  const { grupoId } = params
+  const { movimentoPastoralId } = params
 
   try {
     const body = await request.json()
@@ -57,17 +61,17 @@ export async function PUT(
 
     // Remova todos os coordenadores e redes sociais associados ao grupo
     await prisma.coordenador.deleteMany({
-      where: { grupoId },
+      where: { movimentoPastoralId },
     })
 
     await prisma.redeSocial.deleteMany({
-      where: { grupoId },
+      where: { movimentoPastoralId },
     })
 
     // Atualize o grupo no banco de dados
     const grupo = await prisma.movimentoPastoral.update({
       where: {
-        id: grupoId,
+        id: movimentoPastoralId,
       },
       data: {
         ...parsedData,
@@ -108,10 +112,14 @@ export async function PUT(
                 update: {
                   data: new Date(ata.data),
                   descricao: ata.descricao,
+                  grupo: undefined,
+                  movimentoPastoralId: '',
                 },
                 create: {
                   data: new Date(ata.data),
                   descricao: ata.descricao,
+                  grupo: undefined,
+                  movimentoPastoralId: '',
                 },
               })),
             }
@@ -161,17 +169,17 @@ export async function DELETE(
 
     // Remove os coordenadores associados
     await prisma.coordenador.deleteMany({
-      where: { grupoId: id },
+      where: { movimentoPastoralId: id },
     })
 
     // Remove as redes sociais associadas
     await prisma.redeSocial.deleteMany({
-      where: { grupoId: id },
+      where: { movimentoPastoralId: id },
     })
 
     // Remove as atas associadas
     await prisma.ata.deleteMany({
-      where: { grupoId: id },
+      where: { movimentoPastoralId: id },
     })
 
     // Remove o grupo

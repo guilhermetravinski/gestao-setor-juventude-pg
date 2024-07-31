@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const formSchema = z.object({
   nome: z.string({ message: 'Campo obrigatório' }).min(1, {
-    message: 'O nome do grupo deve ter pelo menos 3 caracter.',
+    message: 'O nome do grupo deve ter pelo menos 1 caracter.',
   }),
   jovensAtivos: z.enum(
     ['Até 20 jovens', 'Entre 20 e 50 jovens', 'Mais de 50 jovens'],
@@ -10,20 +10,11 @@ export const formSchema = z.object({
       required_error: 'Selecione o número de jovens ativos.',
     },
   ),
-  tipo: z.enum(['Pastoral', 'Movimento'], {
+  carisma: z.string().optional(),
+  tipo: z.enum(['Movimento', 'Pastoral'], {
     required_error: 'Selecione o tipo.',
   }),
-  carisma: z.string().optional(),
   atividades: z.string().optional(),
-  atas: z
-    .array(
-      z.object({
-        id: z.string(),
-        data: z.string(),
-        descricao: z.string(),
-      }),
-    )
-    .optional(),
   coordenadores: z
     .array(
       z.object({
@@ -53,8 +44,9 @@ export const formSchema = z.object({
     )
     .optional(),
   localAtuacao: z.string({ message: 'Campo obrigatório' }).min(1, {
-    message: 'Selecione um setor.',
+    message: 'Preencha o local de atuação.',
   }),
+
   anoFundacao: z.string().optional(),
   biografia: z.string().optional(),
   observacoes: z.string().optional(),

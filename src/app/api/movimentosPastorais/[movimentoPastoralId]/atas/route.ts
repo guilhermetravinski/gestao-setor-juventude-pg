@@ -8,20 +8,20 @@ const prisma = new PrismaClient()
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { grupoId: string } },
+  { params }: { params: { movimentoPastoralId: string } },
 ) {
-  const { grupoId } = params
+  const { movimentoPastoralId } = params
 
-  if (!grupoId) {
+  if (!movimentoPastoralId) {
     return NextResponse.json(
-      { error: 'grupoId é obrigatório' },
+      { error: 'movimentoPastoralId é obrigatório' },
       { status: 400 },
     )
   }
 
   try {
     const atas = await prisma.ata.findMany({
-      where: { grupoId },
+      where: { movimentoPastoralId },
       orderBy: { data: 'desc' },
     })
 
@@ -39,16 +39,16 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { grupoId: string } },
+  { params }: { params: { movimentoPastoralId: string } },
 ) {
   try {
-    const { grupoId } = params
+    const { movimentoPastoralId } = params
     const body = await request.json()
     const parsedData = ataSchema.parse(body)
 
     const ata = await prisma.ata.create({
       data: {
-        grupoId,
+        movimentoPastoralId,
         data: new Date(parsedData.data),
         descricao: parsedData.descricao,
       },
@@ -63,6 +63,7 @@ export async function POST(
       )
     }
     if (error instanceof Error) {
+      console.log(error)
       return NextResponse.json(
         { error: 'Erro ao criar ata', details: error.message },
         { status: 500 },
