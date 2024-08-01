@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useFieldArray, useForm } from 'react-hook-form'
+import InputMask from 'react-input-mask'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -16,46 +17,71 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
+import { CoordenadorDiocesano } from '@/lib/definitions'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
-export function CoordenacaoForm() {
+interface CoordenacaoFormProps {
+  coordenadores: CoordenadorDiocesano[]
+}
+
+export function CoordenacaoForm({ coordenadores }: CoordenacaoFormProps) {
+  const parsedData = formSchema.parse({ coordenadores })
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      coordenadores: [
-        {
-          nome: 'Guilherme Travinski',
-          representacao: 'setor-3',
-          telefone: '42999218862',
-        },
-      ],
-    },
+    defaultValues: parsedData,
   })
   const { toast } = useToast()
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'coordenadores',
   })
 
+  // useEffect(() => {
+  //   append(defaultValues.coordenadores)
+  // }, [defaultValues, append])
+
   const router = useRouter()
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    toast({
-      variant: 'success',
-      title: 'Grupo cadastrado com sucesso',
-    })
-    router.push('/grupos')
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const url = `${API_BASE_URL}/api/coordenadores`
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+
+      if (response.ok) {
+        toast({
+          variant: 'success',
+          title: `Coordenadores editados com sucesso`,
+          duration: 3000,
+        })
+        router.push('/coordenacao')
+        router.refresh()
+      } else {
+        const errorData = await response.json()
+        toast({
+          variant: 'destructive',
+          title: `Erro ao editar coordenadores`,
+          description: errorData.error,
+          duration: 3000,
+        })
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: `Erro ao editar coordenadores`,
+        duration: 3000,
+      })
+    }
   }
 
   return (
@@ -71,38 +97,12 @@ export function CoordenacaoForm() {
               <div className="mr-6 flex flex-1 flex-col gap-4">
                 <FormField
                   control={form.control}
-                  name={`coordenadores.${index}.representacao`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={(value) => field.onChange(value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione a representação" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="setor-1">Setor 1</SelectItem>
-                            <SelectItem value="setor-2">Setor 2</SelectItem>
-                            <SelectItem value="setor-3">Setor 3</SelectItem>
-                            <SelectItem value="setor-4">Setor 4</SelectItem>
-                            <SelectItem value="setor-5">Setor 5</SelectItem>
-                            <SelectItem value="setor-6">Setor 6</SelectItem>
-                            <SelectItem value="setor-7">Setor 7</SelectItem>
-                            <SelectItem value="setor-8">Setor 8</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name={`coordenadores.${index}.nome`}
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>
+                        Nome <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Nome do coordenador" {...field} />
                       </FormControl>
@@ -115,9 +115,54 @@ export function CoordenacaoForm() {
                   name={`coordenadores.${index}.telefone`}
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>
+                        Telefone{' '}
+                        <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <InputMask
+                          mask="(99) 99999-9999"
+                          value={field.value}
+                          onChange={field.onChange}
+                        >
+                          <Input placeholder="Telefone do coordenador" />
+                        </InputMask>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`coordenadores.${index}.representacao`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Representação{' '}
+                        <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Telefone do coordenador"
+                          placeholder="Informe a representação"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`coordenadores.${index}.paroquia`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Paróquia{' '}
+                        <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Informe a paróquia de origem"
                           {...field}
                         />
                       </FormControl>
@@ -142,7 +187,12 @@ export function CoordenacaoForm() {
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  append({ nome: '', representacao: 'setor-1', telefone: '' })
+                  append({
+                    nome: '',
+                    representacao: '',
+                    telefone: '',
+                    paroquia: '',
+                  })
                 }
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -151,9 +201,15 @@ export function CoordenacaoForm() {
             </div>
           )}
         </div>
-        <div className="flex justify-end">
-          <Button type="submit" disabled={!form.formState.isValid}>
-            Salvar coordenação
+        <div className="flex flex-col">
+          <span className="mb-3 text-xs text-rose-500">
+            * Campos obrigatórios
+          </span>
+          <Button
+            type="submit"
+            disabled={!form.formState.isDirty || form.formState.isLoading}
+          >
+            Salvar coordenadores
           </Button>
         </div>
       </form>

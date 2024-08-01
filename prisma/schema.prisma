@@ -36,7 +36,7 @@ model Ata {
   data                DateTime
   descricao           String
   grupoId             String?
-  grupo               Grupo?              @relation(fields: [grupoId], references: [id])
+  grupo               Grupo?             @relation(fields: [grupoId], references: [id])
   MovimentoPastoral   MovimentoPastoral? @relation(fields: [movimentoPastoralId], references: [id])
   movimentoPastoralId String?
 }
@@ -52,7 +52,7 @@ model Grupo {
   coordenadores Coordenador[]
   redesSociais  RedeSocial[]
   atas          Ata[]
-  jovensAtivos   String
+  jovensAtivos  String
   reunioes      String?
   observacoes   String?
   createdAt     DateTime      @default(now())
@@ -70,9 +70,19 @@ model MovimentoPastoral {
   coordenadores Coordenador[]
   redesSociais  RedeSocial[]
   atas          Ata[]
-  jovensAtivos   String
+  jovensAtivos  String
   atividades    String?
   observacoes   String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+}
+
+model CoordenadorDiocesano {
+  id            String   @id @default(uuid())
+  nome          String
+  telefone      String
+  paroquia      String
+  representacao String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
