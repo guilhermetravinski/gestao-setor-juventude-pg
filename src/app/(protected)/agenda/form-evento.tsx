@@ -164,7 +164,11 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
             <FormItem>
               <FormLabel>Descrição</FormLabel>
               <FormControl>
-                <Textarea placeholder="Descrição do evento" {...field} />
+                <Textarea
+                  maxLength={500}
+                  placeholder="Descrição do evento"
+                  {...field}
+                />
               </FormControl>
 
               <FormMessage />

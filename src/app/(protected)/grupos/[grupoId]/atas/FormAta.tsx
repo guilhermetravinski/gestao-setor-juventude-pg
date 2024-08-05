@@ -160,6 +160,7 @@ export function FormEvento({ setOpen, mode, defaultValues }: FormEventoProps) {
               <FormLabel>Descrição</FormLabel>
               <FormControl>
                 <Textarea
+                  maxLength={500}
                   disabled={form.formState.isSubmitting}
                   placeholder="Descrição da ata"
                   {...field}

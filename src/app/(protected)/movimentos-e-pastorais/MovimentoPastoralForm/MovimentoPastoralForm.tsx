@@ -259,7 +259,7 @@ export function MovimentoPastoralForm({
                 <Textarea
                   placeholder="Hisória do grupo"
                   {...field}
-                  maxLength={250}
+                  maxLength={500}
                 />
               </FormControl>
               <FormMessage />
@@ -354,8 +354,8 @@ export function MovimentoPastoralForm({
                             <SelectValue placeholder="Selecione a rede social" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Facebook">Facebook</SelectItem>
                             <SelectItem value="Instagram">Instagram</SelectItem>
+                            <SelectItem value="Facebook">Facebook</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -430,7 +430,11 @@ export function MovimentoPastoralForm({
             <FormItem>
               <FormLabel>Atividades</FormLabel>
               <FormControl>
-                <Input placeholder="Atividades realizadas" {...field} />
+                <Textarea
+                  maxLength={500}
+                  placeholder="Atividades realizadas"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -446,7 +450,7 @@ export function MovimentoPastoralForm({
                 <Textarea
                   placeholder="Observações sobre o movimento ou pastoral"
                   {...field}
-                  maxLength={250}
+                  maxLength={500}
                 />
               </FormControl>
               <FormMessage />

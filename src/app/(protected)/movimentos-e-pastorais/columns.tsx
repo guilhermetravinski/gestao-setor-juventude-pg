@@ -23,18 +23,7 @@ export const columns: ColumnDef<MovimentoPastoral>[] = [
       <DataTableColumnHeader column={column} title="Tipo" />
     ),
   },
-  {
-    accessorKey: 'carisma',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Carisma" />
-    ),
-  },
-  {
-    accessorKey: 'localAtuacao',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Local de atuação" />
-    ),
-  },
+
   {
     id: 'actions',
     cell: ({ row }) => {
