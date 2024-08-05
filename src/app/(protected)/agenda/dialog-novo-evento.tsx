@@ -28,7 +28,7 @@ export function DialogNovoEvento({ onClose }: DialogNovoEventoProps) {
           Novo evento
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="h-full overflow-auto sm:max-w-[425px] md:max-h-[500px]">
         <DialogHeader>
           <DialogTitle>Novo evento</DialogTitle>
           <DialogDescription>

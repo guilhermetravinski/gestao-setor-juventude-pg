@@ -13,8 +13,8 @@ import { DialogNovoEvento } from './dialog-novo-evento'
 export interface Evento {
   titulo: string
   local: string
-  data: Date
-  horario: string
+  dataInicio: Date
+  dataFim: Date
   descricao: string
 }
 
@@ -24,8 +24,8 @@ export default function AgendaPage() {
     {
       titulo: 'Festival de música',
       local: 'Salão da Paróquia',
-      data: new Date(),
-      horario: '10:00',
+      dataInicio: new Date(),
+      dataFim: new Date(),
       descricao: 'Evento do grupo de jovens',
     },
   ])
@@ -78,8 +78,9 @@ export default function AgendaPage() {
                       </CardHeader>
                       <CardContent className="flex flex-col">
                         <span>Local: {evento.local}</span>
-                        <span>Data: {evento.data.toLocaleDateString()}</span>
-                        <span>Horário: {evento.horario}</span>
+                        <span>
+                          Data: {evento.dataInicio.toLocaleDateString()}
+                        </span>
                         <span>Descrição: {evento.descricao}</span>
                       </CardContent>
                     </Card>

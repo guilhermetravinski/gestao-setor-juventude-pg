@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Calendar as CalendarIcon } from 'lucide-react'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -24,20 +24,36 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 
 import { Evento } from './page'
+import { TimePickerDemo } from './time-picker-demo'
 
 const eventoSchema = z.object({
   titulo: z
     .string({ message: 'Campo obrigatório' })
     .min(3, 'Campo obrigatório'),
   local: z.string({ message: 'Campo obrigatório' }).min(3, 'Campo obrigatório'),
-  data: z.date({
+  publicoAlvo: z
+    .string({ message: 'Campo obrigatório' })
+    .min(3, 'Campo obrigatório'),
+  organizador: z
+    .string({ message: 'Campo obrigatório' })
+    .min(3, 'Campo obrigatório'),
+  dataInicio: z.date({
     message: 'Campo obrigatório',
   }),
-  horario: z.string({ message: 'Campo obrigatório' }),
+  dataFim: z.date({
+    message: 'Campo obrigatório',
+  }),
   descricao: z
     .string({ message: 'Campo obrigatório' })
     .min(1, 'Campo obrigatório'),
@@ -51,6 +67,14 @@ interface FormEventoProps {
 }
 
 export function FormEvento({ onClose, setOpen }: FormEventoProps) {
+  const [organizadores, setOrganizadores] = useState<string[]>([])
+  const [organizadorSelecionado, setOrganizadorSelecionado] = useState<string>()
+
+  useEffect(() => {
+    const organizadores = ['Setor Juventude', 'Setor 1', 'Setor 2']
+    setOrganizadores(organizadores)
+  }, [setOrganizadores])
+
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventoSchema),
   })
@@ -58,14 +82,13 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
   async function onSubmit(values: EventFormData) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
-
+    console.log(organizadorSelecionado)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     const novoEvento: Evento = {
       titulo: values.titulo,
       local: values.local,
-      horario: values.horario,
-      data: values.data,
+      dataInicio: values.dataInicio,
+      dataFim: values.dataFim,
       descricao: values.descricao,
     }
     onClose(novoEvento)
@@ -91,6 +114,36 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
         />
         <FormField
           control={form.control}
+          name="organizador"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Organizador</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                    setOrganizadorSelecionado(value)
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione um setor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {organizadores.map((organizador, index) => (
+                      <SelectItem key={index} value={organizador}>
+                        {organizador}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="local"
           render={({ field }) => (
             <FormItem>
@@ -105,10 +158,24 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
         />
         <FormField
           control={form.control}
-          name="data"
+          name="publicoAlvo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Púlico alvo</FormLabel>
+              <FormControl>
+                <Input placeholder="Ex.: Jovens da comunidade" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="dataInicio"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Data de início</FormLabel>
+              <FormLabel className="text-left">Início</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -120,7 +187,7 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
                       )}
                     >
                       {field.value ? (
-                        format(field.value, 'PPP', { locale: ptBR })
+                        format(field.value, 'PPP HH:mm', { locale: ptBR })
                       ) : (
                         <span>Selecione uma data</span>
                       )}
@@ -128,33 +195,56 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="flex w-auto items-center p-0 pr-3">
                   <Calendar
                     locale={ptBR}
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date <= new Date()}
                     initialFocus
                   />
+                  <TimePickerDemo setDate={field.onChange} date={field.value} />
                 </PopoverContent>
               </Popover>
-
-              <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="horario"
+          name="dataFim"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Horário de início</FormLabel>
-              <FormControl>
-                <Input placeholder="Horário do evento" {...field} />
-              </FormControl>
-
-              <FormMessage />
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-left">Fim</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground',
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, 'PPP HH:mm', { locale: ptBR })
+                      ) : (
+                        <span>Selecione uma data</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="flex w-auto items-center p-0 pr-3">
+                  <Calendar
+                    locale={ptBR}
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    initialFocus
+                  />
+                  <TimePickerDemo setDate={field.onChange} date={field.value} />
+                </PopoverContent>
+              </Popover>
             </FormItem>
           )}
         />
