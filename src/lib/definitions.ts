@@ -56,3 +56,17 @@ export interface MovimentoPastoral {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface Evento {
+  titulo: string
+  local: string
+  dataInicio: Date
+  dataFim: Date
+  descricao: string
+}
+
+export interface Organizador {
+  id: string
+  nome: string
+  tipo: 'movimentoPastoral' | 'grupo'
+}

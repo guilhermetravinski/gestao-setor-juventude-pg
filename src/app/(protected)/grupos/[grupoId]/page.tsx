@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { getAtasById } from '@/lib/api/atas'
+import { getGrupoById } from '@/lib/api/grupos'
 import { getInitials } from '@/lib/utils'
 
 import facebookLogo from '../../../../../public/facebook.svg'
@@ -23,34 +25,6 @@ import { DialogNovaAta } from './atas/DialogNovaAta'
 
 interface GrupoPageProps {
   params: { grupoId: string }
-}
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-async function getGrupoById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/api/grupos/${id}`, {
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    console.log(res)
-    throw new Error('Erro ao buscar grupo')
-  }
-
-  return res.json()
-}
-
-async function getAtasById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/api/grupos/${id}/atas`, {
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    console.log(res)
-    throw new Error('Erro ao buscar atas')
-  }
-
-  return res.json()
 }
 
 export default async function GrupoPage({ params }: GrupoPageProps) {

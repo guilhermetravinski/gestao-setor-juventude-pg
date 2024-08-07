@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { getMovimentoPastoralById } from '@/lib/api/movimentosPastorais'
 import { getInitials } from '@/lib/utils'
 
 import facebookLogo from '../../../../../public/facebook.svg'
@@ -25,24 +26,9 @@ interface GrupoPageProps {
   params: { movimentoPastoralId: string }
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-async function getGrupoById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/api/movimentosPastorais/${id}`, {
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    console.log(res)
-    throw new Error('Erro ao buscar movimento ou pastoral')
-  }
-
-  return res.json()
-}
-
 export default async function GrupoPage({ params }: GrupoPageProps) {
   const { movimentoPastoralId } = params
-  const movimentoPastoral = (await getGrupoById(
+  const movimentoPastoral = (await getMovimentoPastoralById(
     movimentoPastoralId,
   )) as MovimentoPastoral
   return (

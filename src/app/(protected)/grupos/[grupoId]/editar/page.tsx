@@ -1,21 +1,7 @@
+import { getGrupoById } from '@/lib/api/grupos'
 import { Grupo } from '@/lib/definitions'
 
 import { GrupoForm } from '../../GrupoForm/GrupoForm'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-async function getGrupoById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/api/grupos/${id}`, {
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    console.log(res)
-    throw new Error('Erro ao buscar grupo')
-  }
-
-  return res.json()
-}
 
 interface GrupoPageProps {
   params: { grupoId: string }

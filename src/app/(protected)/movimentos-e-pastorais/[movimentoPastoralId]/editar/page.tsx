@@ -1,21 +1,7 @@
+import { getMovimentoPastoralById } from '@/lib/api/movimentosPastorais'
 import { MovimentoPastoral } from '@/lib/definitions'
 
 import { MovimentoPastoralForm } from '../../MovimentoPastoralForm/MovimentoPastoralForm'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-async function getMovimentoPastoralById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/api/movimentosPastorais/${id}`, {
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    console.log(res)
-    throw new Error('Erro ao buscar movimento ou pastoral')
-  }
-
-  return res.json()
-}
 
 interface MovimentoPastoralPageProps {
   params: { movimentoPastoralId: string }

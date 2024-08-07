@@ -10,16 +10,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Evento, Organizador } from '@/lib/definitions'
 
 import { FormEvento } from './form-evento'
-import { Evento } from './page'
 
 interface DialogNovoEventoProps {
   onClose: (evento: Evento) => void
+  organizadoresApi: Organizador[]
 }
 
-export function DialogNovoEvento({ onClose }: DialogNovoEventoProps) {
+export function DialogNovoEvento({
+  onClose,
+  organizadoresApi,
+}: DialogNovoEventoProps) {
   const [open, setOpen] = useState(false)
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -35,7 +40,11 @@ export function DialogNovoEvento({ onClose }: DialogNovoEventoProps) {
             Preencha os campos para criar um novo evento.
           </DialogDescription>
         </DialogHeader>
-        <FormEvento onClose={onClose} setOpen={setOpen} />
+        <FormEvento
+          onClose={onClose}
+          setOpen={setOpen}
+          organizadoresApi={organizadoresApi}
+        />
       </DialogContent>
     </Dialog>
   )

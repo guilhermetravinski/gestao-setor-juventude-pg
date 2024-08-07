@@ -32,9 +32,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { Evento, Organizador } from '@/lib/definitions'
 import { cn } from '@/lib/utils'
 
-import { Evento } from './page'
 import { TimePickerDemo } from './time-picker-demo'
 
 const eventoSchema = z.object({
@@ -64,16 +64,24 @@ type EventFormData = z.infer<typeof eventoSchema>
 interface FormEventoProps {
   onClose: (evento: Evento) => void
   setOpen: Dispatch<SetStateAction<boolean>>
+  organizadoresApi: Organizador[]
 }
 
-export function FormEvento({ onClose, setOpen }: FormEventoProps) {
+export function FormEvento({
+  onClose,
+  setOpen,
+  organizadoresApi,
+}: FormEventoProps) {
   const [organizadores, setOrganizadores] = useState<string[]>([])
   const [organizadorSelecionado, setOrganizadorSelecionado] = useState<string>()
 
   useEffect(() => {
-    const organizadores = ['Setor Juventude', 'Setor 1', 'Setor 2']
-    setOrganizadores(organizadores)
-  }, [setOrganizadores])
+    const newOrganizadores = organizadoresApi.map(
+      (organizador) => organizador.nome,
+    )
+
+    setOrganizadores(newOrganizadores)
+  }, [setOrganizadores, organizadoresApi])
 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventoSchema),
@@ -82,7 +90,6 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
   async function onSubmit(values: EventFormData) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(organizadorSelecionado)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     const novoEvento: Evento = {
       titulo: values.titulo,
@@ -127,7 +134,7 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione um setor" />
+                    <SelectValue placeholder="Selecione um organizador" />
                   </SelectTrigger>
                   <SelectContent>
                     {organizadores.map((organizador, index) => (
@@ -161,7 +168,7 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
           name="publicoAlvo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Púlico alvo</FormLabel>
+              <FormLabel>Público alvo</FormLabel>
               <FormControl>
                 <Input placeholder="Ex.: Jovens da comunidade" {...field} />
               </FormControl>
@@ -189,7 +196,7 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
                       {field.value ? (
                         format(field.value, 'PPP HH:mm', { locale: ptBR })
                       ) : (
-                        <span>Selecione uma data</span>
+                        <span>Data e hora de início</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
@@ -228,7 +235,7 @@ export function FormEvento({ onClose, setOpen }: FormEventoProps) {
                       {field.value ? (
                         format(field.value, 'PPP HH:mm', { locale: ptBR })
                       ) : (
-                        <span>Selecione uma data</span>
+                        <span>Data e hora de fim</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>

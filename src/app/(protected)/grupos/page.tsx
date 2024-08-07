@@ -1,19 +1,8 @@
 import { DataTable } from '@/components/DataTable/data-table'
 import { Card, CardContent } from '@/components/ui/card'
+import { getGrupos } from '@/lib/api/grupos'
 
 import { columns } from './columns'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-async function getGrupos() {
-  const res = await fetch(`${API_BASE_URL}/api/grupos`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) {
-    throw new Error('Erro ao buscar grupos')
-  }
-  return res.json()
-}
 
 export default async function GruposPage() {
   const grupos = await getGrupos()

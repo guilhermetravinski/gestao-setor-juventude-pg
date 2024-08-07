@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
 
     // Valide os dados usando o schema Zod
     const parsedData = formSchema.parse(body)
-    console.log(parsedData)
     // Crie o grupo no banco de dados
     const grupo = await prisma.grupo.create({
       data: {
