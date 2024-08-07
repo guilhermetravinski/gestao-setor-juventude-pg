@@ -90,6 +90,8 @@ export function FormEvento({
   async function onSubmit(values: EventFormData) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    console.log(values)
+
     await new Promise((resolve) => setTimeout(resolve, 1000))
     const novoEvento: Evento = {
       titulo: values.titulo,
@@ -262,7 +264,11 @@ export function FormEvento({
             <FormItem>
               <FormLabel>Descrição</FormLabel>
               <FormControl>
-                <Textarea placeholder="Descrição do evento" {...field} />
+                <Textarea
+                  maxLength={500}
+                  placeholder="Descrição do evento"
+                  {...field}
+                />
               </FormControl>
 
               <FormMessage />

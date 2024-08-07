@@ -60,8 +60,6 @@ export function FormEvento({ setOpen, mode, defaultValues }: FormEventoProps) {
   const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
   async function onSubmit(values: AtaFormData) {
-    console.log(values)
-
     try {
       const body = {
         data: values.data,
@@ -163,6 +161,7 @@ export function FormEvento({ setOpen, mode, defaultValues }: FormEventoProps) {
               <FormLabel>Descrição</FormLabel>
               <FormControl>
                 <Textarea
+                  maxLength={500}
                   disabled={form.formState.isSubmitting}
                   placeholder="Descrição da ata"
                   {...field}

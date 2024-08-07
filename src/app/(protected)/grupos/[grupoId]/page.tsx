@@ -73,21 +73,28 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
               <CardContent>
                 {grupo.redesSociais.length > 0 ? (
                   grupo.redesSociais.map((redeSocial, index) => (
-                    <div className="flex gap-3" key={index}>
-                      <Image
-                        src={
-                          redeSocial.rede === 'Facebook'
-                            ? facebookLogo
-                            : instagramLogo
-                        }
-                        alt={''}
-                      />
-                      <div className="flex flex-col">
-                        <span className="font-semibold">{redeSocial.rede}</span>
-                        <span className="text-muted-foreground">
-                          {redeSocial.nomeUsuario}
-                        </span>
+                    <div key={index}>
+                      <div className="flex gap-3">
+                        <Image
+                          src={
+                            redeSocial.rede === 'Facebook'
+                              ? facebookLogo
+                              : instagramLogo
+                          }
+                          alt={''}
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-semibold">
+                            {redeSocial.rede}
+                          </span>
+                          <span className="text-muted-foreground">
+                            {redeSocial.nomeUsuario}
+                          </span>
+                        </div>
                       </div>
+                      {index < grupo.redesSociais.length - 1 && (
+                        <Separator className="my-3" />
+                      )}
                     </div>
                   ))
                 ) : (
@@ -102,21 +109,26 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
               <CardContent>
                 {grupo.coordenadores.length > 0 ? (
                   grupo.coordenadores.map((coordenador, index) => (
-                    <div className="flex gap-3" key={index}>
-                      <Avatar>
-                        <AvatarImage src="" alt="" />
-                        <AvatarFallback>
-                          {getInitials(coordenador.nome)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="font-semibold">
-                          {coordenador.nome}
-                        </span>
-                        <span className="text-muted-foreground">
-                          {coordenador.telefone}
-                        </span>
+                    <div key={index}>
+                      <div className="flex gap-3">
+                        <Avatar>
+                          <AvatarImage src="" alt="" />
+                          <AvatarFallback>
+                            {getInitials(coordenador.nome)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="font-semibold">
+                            {coordenador.nome}
+                          </span>
+                          <span className="text-muted-foreground">
+                            {coordenador.telefone}
+                          </span>
+                        </div>
                       </div>
+                      {index < grupo.coordenadores.length - 1 && (
+                        <Separator className="my-3" />
+                      )}
                     </div>
                   ))
                 ) : (

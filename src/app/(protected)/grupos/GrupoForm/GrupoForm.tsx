@@ -289,7 +289,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                 <Textarea
                   placeholder="Hisória do grupo"
                   {...field}
-                  maxLength={250}
+                  maxLength={500}
                 />
               </FormControl>
               <FormMessage />
@@ -384,8 +384,8 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                             <SelectValue placeholder="Selecione a rede social" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Facebook">Facebook</SelectItem>
                             <SelectItem value="Instagram">Instagram</SelectItem>
+                            <SelectItem value="Facebook">Facebook</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -476,7 +476,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                 <Textarea
                   placeholder="Observações sobre o grupo"
                   {...field}
-                  maxLength={250}
+                  maxLength={500}
                 />
               </FormControl>
               <FormMessage />

@@ -97,7 +97,7 @@ export function MovimentoPastoralForm({
       if (response.ok) {
         toast({
           variant: 'success',
-          title: `Grupo ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,
+          title: `Movimento ou pastoral ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,
           duration: 3000,
         })
         const redirectUrl =
@@ -110,7 +110,7 @@ export function MovimentoPastoralForm({
         const errorData = await response.json()
         toast({
           variant: 'destructive',
-          title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
+          title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} movimento ou pastoral`,
           description: errorData.error,
           duration: 3000,
         })
@@ -118,7 +118,7 @@ export function MovimentoPastoralForm({
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
+        title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} movimento ou pastoral`,
         duration: 3000,
       })
     }
@@ -259,7 +259,7 @@ export function MovimentoPastoralForm({
                 <Textarea
                   placeholder="Hisória do grupo"
                   {...field}
-                  maxLength={250}
+                  maxLength={500}
                 />
               </FormControl>
               <FormMessage />
@@ -354,8 +354,8 @@ export function MovimentoPastoralForm({
                             <SelectValue placeholder="Selecione a rede social" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Facebook">Facebook</SelectItem>
                             <SelectItem value="Instagram">Instagram</SelectItem>
+                            <SelectItem value="Facebook">Facebook</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -430,7 +430,11 @@ export function MovimentoPastoralForm({
             <FormItem>
               <FormLabel>Atividades</FormLabel>
               <FormControl>
-                <Input placeholder="Atividades realizadas" {...field} />
+                <Textarea
+                  maxLength={500}
+                  placeholder="Atividades realizadas"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -446,7 +450,7 @@ export function MovimentoPastoralForm({
                 <Textarea
                   placeholder="Observações sobre o movimento ou pastoral"
                   {...field}
-                  maxLength={250}
+                  maxLength={500}
                 />
               </FormControl>
               <FormMessage />

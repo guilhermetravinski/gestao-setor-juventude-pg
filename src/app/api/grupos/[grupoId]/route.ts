@@ -122,7 +122,6 @@ export async function PUT(
     return NextResponse.json(grupo)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error)
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
         { status: 400 },
@@ -140,15 +139,15 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { grupoId: string } },
 ) {
-  const { id } = params
+  const { grupoId } = params
 
   try {
     // Verifica se o grupo existe
     const grupo = await prisma.grupo.findUnique({
       where: {
-        id,
+        id: grupoId,
       },
     })
 
@@ -161,23 +160,23 @@ export async function DELETE(
 
     // Remove os coordenadores associados
     await prisma.coordenador.deleteMany({
-      where: { grupoId: id },
+      where: { grupoId },
     })
 
     // Remove as redes sociais associadas
     await prisma.redeSocial.deleteMany({
-      where: { grupoId: id },
+      where: { grupoId },
     })
 
     // Remove as atas associadas
     await prisma.ata.deleteMany({
-      where: { grupoId: id },
+      where: { grupoId },
     })
 
     // Remove o grupo
     await prisma.grupo.delete({
       where: {
-        id,
+        id: grupoId,
       },
     })
 

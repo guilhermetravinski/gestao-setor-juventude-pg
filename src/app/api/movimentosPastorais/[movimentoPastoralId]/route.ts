@@ -130,7 +130,6 @@ export async function PUT(
     return NextResponse.json(grupo)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error)
       return NextResponse.json(
         { error: 'Dados inválidos', details: error.errors },
         { status: 400 },
@@ -148,52 +147,57 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { movimentoPastoralId: string } },
 ) {
-  const { id } = params
+  const { movimentoPastoralId } = params
 
   try {
     // Verifica se o grupo existe
     const grupo = await prisma.movimentoPastoral.findUnique({
       where: {
-        id,
+        id: movimentoPastoralId,
       },
     })
 
     if (!grupo) {
       return NextResponse.json(
-        { error: 'Grupo não encontrado' },
+        { error: 'Movimento ou pastoral não encontrado' },
         { status: 404 },
       )
     }
 
     // Remove os coordenadores associados
     await prisma.coordenador.deleteMany({
-      where: { movimentoPastoralId: id },
+      where: { movimentoPastoralId },
     })
 
     // Remove as redes sociais associadas
     await prisma.redeSocial.deleteMany({
-      where: { movimentoPastoralId: id },
+      where: { movimentoPastoralId },
     })
 
     // Remove as atas associadas
     await prisma.ata.deleteMany({
-      where: { movimentoPastoralId: id },
+      where: { movimentoPastoralId },
     })
 
     // Remove o grupo
     await prisma.movimentoPastoral.delete({
       where: {
-        id,
+        id: movimentoPastoralId,
       },
     })
 
-    return NextResponse.json({ message: 'Grupo excluído com sucesso' })
+    return NextResponse.json({
+      message: 'Movimento ou pastoral excluído com sucesso',
+    })
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: 'Erro ao excluir grupo', details: error.message },
+        {
+          error: 'Erro ao excluir movimento ou pastoral',
+          details: error.message,
+        },
         { status: 500 },
       )
     }

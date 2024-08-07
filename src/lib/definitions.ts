@@ -57,6 +57,16 @@ export interface MovimentoPastoral {
   updatedAt: Date
 }
 
+export interface CoordenadorDiocesano {
+  id: string
+  nome: string
+  telefone: string
+  representacao: string
+  paroquia: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface Evento {
   titulo: string
   local: string
