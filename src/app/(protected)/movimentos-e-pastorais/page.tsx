@@ -11,7 +11,7 @@ export default async function MovimentosEPastoraisPage() {
       <div className="mx-auto w-full max-w-6xl">
         <h1 className="text-3xl font-semibold">Movimentos e pastorais</h1>
       </div>
-      <div className="mx-auto w-full max-w-6xl">
+      <div className="mx-auto w-full max-w-3xl">
         <Card>
           <CardContent>
             <DataTable

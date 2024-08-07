@@ -9,7 +9,17 @@ export default async function AgendaPage() {
   const movimentosPastorais =
     (await getMovimentosPastorais()) as MovimentoPastoral[]
 
-  const organizadoresApi = [] as Organizador[]
+  const organizadoresApi = [
+    { nome: 'Setor Juventude', tipo: 'diocesano' },
+    { nome: 'Setor 1', tipo: 'diocesano' },
+    { nome: 'Setor 2', tipo: 'diocesano' },
+    { nome: 'Setor 3', tipo: 'diocesano' },
+    { nome: 'Setor 4', tipo: 'diocesano' },
+    { nome: 'Setor 5', tipo: 'diocesano' },
+    { nome: 'Setor 6', tipo: 'diocesano' },
+    { nome: 'Setor 7', tipo: 'diocesano' },
+    { nome: 'Setor 8', tipo: 'diocesano' },
+  ] as Organizador[]
 
   grupos.map((grupo) =>
     organizadoresApi.push({ id: grupo.id, nome: grupo.nome, tipo: 'grupo' }),

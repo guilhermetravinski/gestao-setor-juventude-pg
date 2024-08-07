@@ -78,5 +78,5 @@ export interface Evento {
 export interface Organizador {
   id: string
   nome: string
-  tipo: 'movimentoPastoral' | 'grupo'
+  tipo: 'movimentoPastoral' | 'grupo' | 'diocesano'
 }

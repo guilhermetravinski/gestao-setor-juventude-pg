@@ -33,7 +33,7 @@ export function DialogNovoEvento({
           Novo evento
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-full overflow-auto sm:max-w-[425px] md:max-h-[500px]">
+      <DialogContent className="h-full overflow-auto sm:max-w-[425px] md:max-h-[600px]">
         <DialogHeader>
           <DialogTitle>Novo evento</DialogTitle>
           <DialogDescription>

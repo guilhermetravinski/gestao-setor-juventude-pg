@@ -13,6 +13,7 @@ import { Calendar } from '@/components/ui/calendar'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -73,7 +74,7 @@ export function FormEvento({
   organizadoresApi,
 }: FormEventoProps) {
   const [organizadores, setOrganizadores] = useState<string[]>([])
-  const [organizadorSelecionado, setOrganizadorSelecionado] = useState<string>()
+  // const [organizadorSelecionado, setOrganizadorSelecionado] = useState<string>()
 
   useEffect(() => {
     const newOrganizadores = organizadoresApi.map(
@@ -127,12 +128,15 @@ export function FormEvento({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Organizador</FormLabel>
+              <FormDescription>
+                Grupos, movimentos e pastorais cadastrados aparecerão aqui
+              </FormDescription>
               <FormControl>
                 <Select
                   value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value)
-                    setOrganizadorSelecionado(value)
+                    // setOrganizadorSelecionado(value)
                   }}
                 >
                   <SelectTrigger>
