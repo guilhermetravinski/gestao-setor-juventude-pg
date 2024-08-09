@@ -68,11 +68,16 @@ export interface CoordenadorDiocesano {
 }
 
 export interface Evento {
+  id: string
   titulo: string
   local: string
+  publicoAlvo: string
+  organizador: string
   dataInicio: Date
   dataFim: Date
   descricao: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface Organizador {

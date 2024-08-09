@@ -87,10 +87,10 @@ export function DataTable<TData, TValue>({
         >
           <Plus className="mr-2 h-4 w-4" /> Adicionar
         </Button>
-        <Button className="ml-3" variant="outline">
+        <Button className="ml-3" variant="outline" disabled>
           <Filter className="mr-2 h-4 w-4" /> Filtrar
         </Button>
-        <Button className="ml-3" variant="outline">
+        <Button className="ml-3" variant="outline" disabled>
           <Download className="mr-2 h-4 w-4" /> Exportar
         </Button>
       </div>
