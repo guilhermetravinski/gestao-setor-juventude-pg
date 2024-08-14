@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useSelectedLayoutSegment } from 'next/navigation'
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 
 export default function NavLink({
   slug,
@@ -10,12 +10,13 @@ export default function NavLink({
   slug: string
   children: React.ReactNode
 }) {
-  const segment = useSelectedLayoutSegment()
+  const segment = usePathname()
+  console.log(segment, slug)
   const isActive = slug === segment
 
   return (
     <Link
-      href={`/${slug}`}
+      href={`${slug}`}
       className={`${isActive ? 'text-foreground' : 'text-muted-foreground'} transition-colors hover:text-foreground`}
     >
       {children}

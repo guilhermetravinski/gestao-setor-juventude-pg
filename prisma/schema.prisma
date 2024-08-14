@@ -9,6 +9,59 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+  role          String?
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
 model Coordenador {
   id                  String             @id @default(uuid())
   nome                String
@@ -19,6 +72,9 @@ model Coordenador {
   updatedAt           DateTime           @updatedAt
   MovimentoPastoral   MovimentoPastoral? @relation(fields: [movimentoPastoralId], references: [id])
   movimentoPastoralId String?
+
+  @@index([grupoId])
+  @@index([movimentoPastoralId])
 }
 
 model RedeSocial {
@@ -29,6 +85,9 @@ model RedeSocial {
   grupo               Grupo?             @relation(fields: [grupoId], references: [id])
   MovimentoPastoral   MovimentoPastoral? @relation(fields: [movimentoPastoralId], references: [id])
   movimentoPastoralId String?
+
+  @@index([grupoId])
+  @@index([movimentoPastoralId])
 }
 
 model Ata {
@@ -39,6 +98,9 @@ model Ata {
   grupo               Grupo?             @relation(fields: [grupoId], references: [id])
   MovimentoPastoral   MovimentoPastoral? @relation(fields: [movimentoPastoralId], references: [id])
   movimentoPastoralId String?
+
+  @@index([grupoId])
+  @@index([movimentoPastoralId])
 }
 
 model Grupo {
@@ -88,14 +150,14 @@ model CoordenadorDiocesano {
 }
 
 model Evento {
-  id            String   @id @default(uuid())
-  titulo        String
-  local         String
-  publicoAlvo   String
-  organizador   String
-  dataInicio    DateTime
-  dataFim       DateTime
-  descricao     String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(uuid())
+  titulo      String
+  local       String
+  publicoAlvo String
+  organizador String
+  dataInicio  DateTime
+  dataFim     DateTime
+  descricao   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

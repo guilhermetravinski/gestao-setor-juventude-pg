@@ -1,33 +1,23 @@
-import { CircleUser, Menu, Package2 } from 'lucide-react'
-import { headers } from 'next/headers'
+import { Menu, Package2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { UserDropdown } from '@/components/UserDropdown'
 
 import logo from '../../../public/logo.png'
 import NavLink from './nav-link'
 
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const header = headers()
-  const pathname = header.get('next-url')
   return (
     <div className="flex min-h-screen w-full flex-col">
-      {pathname}
       <header className="sticky top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
@@ -46,12 +36,12 @@ export default function ProtectedLayout({
                 Logo do Setor Juventude de Ponta Grossa
               </span>
             </Link>
-            <NavLink slug="coordenacao">Coordenação</NavLink>{' '}
-            <NavLink slug="grupos">Grupos</NavLink>
-            <NavLink slug="movimentos-e-pastorais">
+            <NavLink slug="/admin/coordenacao">Coordenação</NavLink>
+            <NavLink slug="/admin/grupos">Grupos</NavLink>
+            <NavLink slug="/admin/movimentos-e-pastorais">
               Movimentos e pastorais
             </NavLink>
-            <NavLink slug="agenda">Agenda</NavLink>
+            <NavLink slug="/admin/agenda">Agenda</NavLink>
           </nav>
           <Sheet>
             <SheetTrigger asChild>
@@ -94,23 +84,7 @@ export default function ProtectedLayout({
           </Sheet>
           <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
             <ModeToggle />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full"
-                >
-                  <CircleUser className="h-5 w-5" />
-                  <span className="sr-only">Menu de alternar usuário</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Guilherme</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Sair</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserDropdown />
           </div>
         </div>
       </header>

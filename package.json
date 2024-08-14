@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.4.2",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.17.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
@@ -32,7 +33,9 @@
     "date-fns": "^3.6.0",
     "lucide-react": "^0.397.0",
     "next": "14.2.4",
+    "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
+    "nookies": "^2.5.2",
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
