@@ -18,7 +18,6 @@ export async function getMovimentoPastoralById(id: string) {
   })
 
   if (!res.ok) {
-    console.log(res)
     throw new Error('Erro ao buscar movimento ou pastoral')
   }
 

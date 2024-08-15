@@ -6,10 +6,19 @@ export async function middleware(request: NextRequest) {
   if (!token && !request.nextUrl.pathname.startsWith('/login'))
     return NextResponse.redirect(new URL('/login', request.url))
 
+  if (token && request.nextUrl.pathname.startsWith('/login'))
+    return NextResponse.redirect(new URL('/', request.url))
+
   switch (token?.role) {
     case 'admin':
       if (!request.nextUrl.pathname.startsWith('/admin')) {
         return NextResponse.redirect(new URL('/admin/grupos', request.url))
+      }
+      break
+
+    case 'user':
+      if (!request.nextUrl.pathname.startsWith('/unauthorized')) {
+        return NextResponse.redirect(new URL('/unauthorized', request.url))
       }
       break
 
@@ -20,4 +29,4 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-export const config = { matcher: ['/admin:path*', '/login'] }
+export const config = { matcher: ['/admin/:path*', '/login'] }

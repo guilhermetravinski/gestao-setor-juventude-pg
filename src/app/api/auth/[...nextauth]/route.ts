@@ -1,5 +1,4 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import { User } from '@prisma/client'
 import NextAuth, { AuthOptions } from 'next-auth'
 import { Adapter } from 'next-auth/adapters'
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
@@ -7,6 +6,9 @@ import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
 import prisma from '@/lib/prisma'
 
 export const authOptions: AuthOptions = {
+  session: {
+    strategy: 'jwt',
+  },
   adapter: PrismaAdapter(prisma) as Adapter,
   providers: [
     GoogleProvider({
@@ -36,10 +38,15 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+  pages: {
+    signIn: '/', // on successfully signin
+    signOut: '/login', // on signout redirects users to a custom login page.
+    error: '/unauthorized', // displays authentication errors
+  },
   callbacks: {
-    // async jwt({ token, user }) {
-    //   return { ...token, ...user }
-    // },
+    async jwt({ token, user }) {
+      return { ...token, ...user }
+    },
     async signIn({ profile }) {
       const allowedEmail = 'guitrafer@gmail.com'
       if (profile?.email && profile?.email === allowedEmail) {
@@ -48,8 +55,8 @@ export const authOptions: AuthOptions = {
         return false // Negar login
       }
     },
-    async session({ session, user }) {
-      session.user.role = user.role
+    async session({ session, token }) {
+      session.user.role = token.role
       return session
     },
   },

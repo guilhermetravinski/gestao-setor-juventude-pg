@@ -8,7 +8,6 @@ export async function getAtasById(id: string) {
   })
 
   if (!res.ok) {
-    console.log(res)
     throw new Error('Erro ao buscar atas')
   }
 

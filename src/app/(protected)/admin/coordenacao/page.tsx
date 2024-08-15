@@ -20,7 +20,7 @@ async function getCoordenadores() {
 
 export default async function CoordenacaoPage() {
   const coordenacao = (await getCoordenadores()) as CoordenadorDiocesano[]
-  console.log(coordenacao)
+
   return (
     <main className="flex flex-1 flex-col gap-8 bg-muted/40 p-10">
       <div className="mx-auto flex w-full max-w-6xl gap-2">
