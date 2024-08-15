@@ -17,9 +17,9 @@ import { getAtasById } from '@/lib/api/atas'
 import { getGrupoById } from '@/lib/api/grupos'
 import { getInitials } from '@/lib/utils'
 
-import facebookLogo from '../../../../../public/facebook.svg'
-import instagramLogo from '../../../../../public/instagram.svg'
-import { Ata, Grupo } from '../../../../lib/definitions'
+import facebookLogo from '../../../../../../public/facebook.svg'
+import instagramLogo from '../../../../../../public/instagram.svg'
+import { Ata, Grupo } from '../../../../../lib/definitions'
 import { CardAta } from './atas/CardAta'
 import { DialogNovaAta } from './atas/DialogNovaAta'
 

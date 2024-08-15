@@ -5,7 +5,7 @@ import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
 
 import prisma from '@/lib/prisma'
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   session: {
     strategy: 'jwt',
   },

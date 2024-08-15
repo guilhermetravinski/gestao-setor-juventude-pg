@@ -14,14 +14,14 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
-  //   async function onSubmit(event: React.SyntheticEvent) {
-  //     event.preventDefault()
-  //     setIsLoading(true)
+  // async function onSubmit(event: React.SyntheticEvent) {
+  //   event.preventDefault()
+  //   setIsLoading(true)
 
-  //     setTimeout(() => {
-  //       setIsLoading(false)
-  //     }, 3000)
-  //   }
+  //   setTimeout(() => {
+  //     setIsLoading(false)
+  //   }, 3000)
+  // }
 
   return (
     <div className={cn('grid gap-6', className)} {...props}>
@@ -63,7 +63,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         variant="outline"
         type="button"
         disabled={isLoading}
-        onClick={() => signIn('google')}
+        onClick={() => {
+          signIn('google')
+          setIsLoading(true)
+        }}
       >
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

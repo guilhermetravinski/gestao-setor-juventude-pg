@@ -16,9 +16,9 @@ import { Separator } from '@/components/ui/separator'
 import { getMovimentoPastoralById } from '@/lib/api/movimentosPastorais'
 import { getInitials } from '@/lib/utils'
 
+import facebookLogo from '../../../../../../public/facebook.svg'
+import instagramLogo from '../../../../../../public/instagram.svg'
 import { MovimentoPastoral } from '../../../../../lib/definitions'
-import facebookLogo from '../../../../../public/facebook.svg'
-import instagramLogo from '../../../../../public/instagram.svg'
 import { CardAta } from './atas/CardAta'
 import { DialogNovaAta } from './atas/DialogNovaAta'
 
