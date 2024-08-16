@@ -86,7 +86,7 @@ export function FormEvento({ setOpen, mode, defaultValues }: FormEventoProps) {
           title: `Ata ${mode === 'new' ? 'cadastrada' : 'atualizada'} com sucesso`,
           duration: 3000,
         })
-        router.push(`/movimentos-e-pastorais/${movimentoPastoralId}`)
+        router.push(`/admin/movimentos-e-pastorais/${movimentoPastoralId}`)
         router.refresh()
       } else {
         const errorData = await response.json()

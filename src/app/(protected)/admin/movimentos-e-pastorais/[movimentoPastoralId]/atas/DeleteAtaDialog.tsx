@@ -50,7 +50,7 @@ export function DeleteAtaDialog({ ataId }: DeleteAtaDialogProps) {
           title: `Ata excluída com sucesso`,
           duration: 3000,
         })
-        router.push(`/movimentos-e-pastorais/${movimentoPastoralId}`)
+        router.push(`/admin/movimentos-e-pastorais/${movimentoPastoralId}`)
         router.refresh()
 
         setIsOpen(false)

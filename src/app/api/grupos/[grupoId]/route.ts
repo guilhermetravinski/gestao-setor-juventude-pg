@@ -1,6 +1,7 @@
 // app/api/grupos/[id]/route.ts
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { z } from 'zod'
 
 import { formSchema } from '../form-schema'
@@ -11,6 +12,10 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { grupoId: string } },
 ) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   const { grupoId } = params
 
   try {
@@ -47,6 +52,10 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { grupoId: string } },
 ) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   const { grupoId } = params
 
   try {
@@ -141,6 +150,10 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { grupoId: string } },
 ) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   const { grupoId } = params
 
   try {

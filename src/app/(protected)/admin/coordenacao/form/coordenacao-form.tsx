@@ -49,7 +49,7 @@ export function CoordenacaoForm({ coordenadores }: CoordenacaoFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const url = `${API_BASE_URL}/api/coordenadores`
+      const url = `${API_BASE_URL}/api/coordenadoresDiocesanos`
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -64,7 +64,7 @@ export function CoordenacaoForm({ coordenadores }: CoordenacaoFormProps) {
           title: `Coordenadores editados com sucesso`,
           duration: 3000,
         })
-        router.push('/coordenacao')
+        router.push('/admin/coordenacao')
         router.refresh()
       } else {
         const errorData = await response.json()

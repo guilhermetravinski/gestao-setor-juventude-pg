@@ -102,8 +102,8 @@ export function MovimentoPastoralForm({
         })
         const redirectUrl =
           mode === 'new'
-            ? '/movimentos-e-pastorais'
-            : `/movimentos-e-pastorais/${defaultValues?.id}`
+            ? '/admin/movimentos-e-pastorais'
+            : `/admin/movimentos-e-pastorais/${defaultValues?.id}`
         router.push(redirectUrl)
         router.refresh()
       } else {

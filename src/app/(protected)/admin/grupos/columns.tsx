@@ -40,7 +40,7 @@ export const columns: ColumnDef<Grupo>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex gap-2">
-          <Link href={`/grupos/${row.original.id}`} passHref>
+          <Link href={`/admin/grupos/${row.original.id}`} passHref>
             <Button variant="ghost" size="icon">
               <ExternalLink className="h-4 w-4" />
             </Button>

@@ -1,22 +1,12 @@
 import { File, Pencil } from 'lucide-react'
 import Link from 'next/link'
 
+import { ExportDropdown } from '@/components/ExportDropdown'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { getCoordenadores } from '@/lib/api/coordenadoresDiocesanos'
 import { CoordenadorDiocesano } from '@/lib/definitions'
 import { getInitials } from '@/lib/utils'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-async function getCoordenadores() {
-  const res = await fetch(`${API_BASE_URL}/api/coordenadores`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) {
-    throw new Error('Erro ao buscar coordenadores')
-  }
-  return res.json()
-}
 
 export default async function CoordenacaoPage() {
   const coordenacao = (await getCoordenadores()) as CoordenadorDiocesano[]
@@ -27,12 +17,17 @@ export default async function CoordenacaoPage() {
         <h1 className="mr-auto text-3xl font-semibold">
           Coordenação diocesana
         </h1>
-        <Link href="/coordenacao/editar" passHref>
+        <Link href="/admin/coordenacao/editar" passHref>
           <Button size="sm" variant="outline">
             <Pencil className="mr-2 h-4 w-4" />
             Editar
           </Button>
         </Link>
+        <ExportDropdown
+          type="coordenadores-diocesanos"
+          data={coordenacao}
+          disabled={coordenacao.length === 0}
+        />
       </div>
 
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">

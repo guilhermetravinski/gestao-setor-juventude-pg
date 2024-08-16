@@ -52,7 +52,7 @@ export function DeleteMovimentoPastoralDialog({
           title: `Movimento ou pastoral excluído com sucesso`,
           duration: 3000,
         })
-        router.push('/movimentos-e-pastorais')
+        router.push('/admin/movimentos-e-pastorais')
         router.refresh()
       } else {
         const errorData = await response.json()

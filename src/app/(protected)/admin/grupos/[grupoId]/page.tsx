@@ -2,6 +2,7 @@ import { File, Pencil } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { ExportDropdown } from '@/components/ExportDropdown'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,7 +37,7 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
       <div className="mx-auto flex w-full max-w-6xl gap-2">
         <h1 className="mr-auto text-3xl font-semibold">{grupo.nome}</h1>
 
-        <Link href={`/grupos/${grupoId}/editar`} passHref>
+        <Link href={`/admin/grupos/${grupoId}/editar`} passHref>
           <Button size="sm" variant="outline">
             <Pencil className="mr-2 h-4 w-4" />
             Editar
@@ -140,6 +141,11 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
               <CardHeader className="flex flex-row space-y-0">
                 <CardTitle>Atas</CardTitle>
                 <DialogNovaAta />
+                <ExportDropdown
+                  data={atas}
+                  type="atas"
+                  disabled={atas.length === 0}
+                />
               </CardHeader>
               <CardContent>
                 {atas.length === 0 ? (

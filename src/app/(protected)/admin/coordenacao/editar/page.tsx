@@ -1,18 +1,7 @@
+import { getCoordenadores } from '@/lib/api/coordenadoresDiocesanos'
 import { CoordenadorDiocesano } from '@/lib/definitions'
 
 import { CoordenacaoForm } from '../form/coordenacao-form'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-
-async function getCoordenadores() {
-  const res = await fetch(`${API_BASE_URL}/api/coordenadores`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) {
-    throw new Error('Erro ao buscar coordenadores')
-  }
-  return res.json()
-}
 
 export default async function EditarCoordenacaoPage() {
   const coordenadores = (await getCoordenadores()) as CoordenadorDiocesano[]

@@ -15,9 +15,10 @@ export default async function MovimentosEPastoraisPage() {
         <Card>
           <CardContent>
             <DataTable
+              type="movimentos-e-pastorais"
               columns={columns}
               data={movimentosPastorais}
-              novoRegistroPath="/movimentos-e-pastorais/novo"
+              novoRegistroPath="/admin/movimentos-e-pastorais/novo"
             />
           </CardContent>
         </Card>

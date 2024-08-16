@@ -1,6 +1,7 @@
 // app/api/grupos/route.ts
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { z } from 'zod'
 
 import { formSchema } from './form-schema'
@@ -8,6 +9,10 @@ import { formSchema } from './form-schema'
 const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   try {
     const body = await request.json()
 
@@ -62,7 +67,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   try {
     const grupos = await prisma.grupo.findMany()
     return NextResponse.json(grupos)

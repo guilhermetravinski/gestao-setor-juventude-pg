@@ -12,7 +12,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
-import { Download, Filter, Plus } from 'lucide-react'
+import { Filter, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -27,11 +27,13 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import { ExportDropdown } from '../ExportDropdown'
 import { DataTablePagination } from './data-table-pagination'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  type: 'grupos' | 'movimentos-e-pastorais'
   novoRegistroPath: string
 }
 
@@ -39,6 +41,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   novoRegistroPath,
+  type,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -69,6 +72,10 @@ export function DataTable<TData, TValue>({
     },
   })
 
+  const getFilteredData = () => {
+    const filteredRows = table.getFilteredRowModel().rows
+    return filteredRows.map((row) => row.original)
+  }
   return (
     <div>
       <div className="flex items-center py-4">
@@ -90,9 +97,11 @@ export function DataTable<TData, TValue>({
         <Button className="ml-3" variant="outline" disabled>
           <Filter className="mr-2 h-4 w-4" /> Filtrar
         </Button>
-        <Button className="ml-3" variant="outline" disabled>
-          <Download className="mr-2 h-4 w-4" /> Exportar
-        </Button>
+        <ExportDropdown
+          data={getFilteredData()}
+          type={type}
+          disabled={getFilteredData().length === 0}
+        />
       </div>
       <div className="rounded-md border bg-card">
         <Table>

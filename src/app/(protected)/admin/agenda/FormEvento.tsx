@@ -178,7 +178,7 @@ export function FormEvento({
         const year = eventDate.getFullYear()
 
         // Construa a URL com os query params
-        const redirectUrl = `/agenda?mes=${month}&ano=${year}`
+        const redirectUrl = `/admin/agenda?mes=${month}&ano=${year}`
 
         // Redirecione para a lista de eventos com os parâmetros de query
         router.push(redirectUrl)

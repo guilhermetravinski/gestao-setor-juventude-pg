@@ -111,7 +111,9 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
           duration: 3000,
         })
         const redirectUrl =
-          mode === 'new' ? '/grupos' : `/grupos/${defaultValues?.id}`
+          mode === 'new'
+            ? '/admin/grupos'
+            : `/admin/grupos/${defaultValues?.id}`
         router.push(redirectUrl)
         router.refresh()
       } else {

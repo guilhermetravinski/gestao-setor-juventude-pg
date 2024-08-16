@@ -50,7 +50,7 @@ export function DeleteAtaDialog({ ataId }: DeleteAtaDialogProps) {
           title: `Ata excluída com sucesso`,
           duration: 3000,
         })
-        router.push(`/grupos/${grupoId}`)
+        router.push(`/admin/grupos/${grupoId}`)
         router.refresh()
 
         setIsOpen(false)

@@ -42,7 +42,7 @@ export function DeleteGrupoDialog({ grupoId }: DeleteGrupoDialogProps) {
         throw new Error('Erro ao deletar o grupo')
       }
 
-      router.push('/grupos')
+      router.push('/admin/grupos')
       router.refresh()
       setIsOpen(false)
     } catch (error) {

@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation'
 // import { useEffect, useState } from 'react'
 // import { DateRange } from 'react-day-picker'
 import { DeleteEventoDialog } from '@/components/DeleteEventoDialog'
+import { ExportDropdown } from '@/components/ExportDropdown'
 // import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -68,6 +69,11 @@ export function EventosList({ organizadoresApi, eventos }: EventosListProps) {
           <CardHeader className="flex flex-row space-y-0">
             <CardTitle>Eventos</CardTitle>
             <DialogEvento organizadoresApi={organizadoresApi} mode="new" />
+            <ExportDropdown
+              data={filteredEventos}
+              type="eventos"
+              disabled={filteredEventos.length === 0}
+            />
           </CardHeader>
           <CardContent className="flex flex-col">
             {filteredEventos.length === 0 ? (

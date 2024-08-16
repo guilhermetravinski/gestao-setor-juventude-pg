@@ -8,8 +8,8 @@ import logo from '../../../../public/logo.png'
 import { UserAuthForm } from './UserAuthForm'
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.',
+  title: 'Acesse sua conta',
+  description: 'Entre na sua conta para acessar o sistema.',
 }
 
 export default function AuthenticationPage() {

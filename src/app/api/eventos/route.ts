@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { z } from 'zod'
 
 // Importa o schema do Zod
@@ -28,6 +29,10 @@ const eventoSchema = z.object({
 const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   try {
     const body = await request.json()
 
@@ -60,7 +65,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   try {
     const eventos = await prisma.evento.findMany({
       orderBy: {

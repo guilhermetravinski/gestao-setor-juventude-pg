@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { z } from 'zod'
 
 import { ataSchema } from './form-schema'
@@ -10,6 +11,10 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { movimentoPastoralId: string } },
 ) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   const { movimentoPastoralId } = params
 
   if (!movimentoPastoralId) {
@@ -41,6 +46,10 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { movimentoPastoralId: string } },
 ) {
+  const token = await getToken({ req: request })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   try {
     const { movimentoPastoralId } = params
     const body = await request.json()

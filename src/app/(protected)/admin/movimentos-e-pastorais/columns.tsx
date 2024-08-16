@@ -29,7 +29,10 @@ export const columns: ColumnDef<MovimentoPastoral>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex justify-end gap-2">
-          <Link href={`/movimentos-e-pastorais/${row.original.id}`} passHref>
+          <Link
+            href={`/admin/movimentos-e-pastorais/${row.original.id}`}
+            passHref
+          >
             <Button variant="ghost" size="icon">
               <ExternalLink className="h-4 w-4" />
             </Button>

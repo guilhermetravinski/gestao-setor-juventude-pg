@@ -17,7 +17,8 @@ export default async function GruposPage() {
             <DataTable
               columns={columns}
               data={grupos}
-              novoRegistroPath="/grupos/novo"
+              type="grupos"
+              novoRegistroPath="/admin/grupos/novo"
             />
           </CardContent>
         </Card>

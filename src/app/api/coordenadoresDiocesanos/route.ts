@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { z } from 'zod'
 
 const prisma = new PrismaClient()
@@ -25,7 +26,14 @@ const updateSchema = z.object({
   ),
 })
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const token = await getToken({
+    req: request,
+  })
+  if (!token) {
+    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const coordenadores = await prisma.coordenadorDiocesano.findMany()
     return NextResponse.json(coordenadores)
