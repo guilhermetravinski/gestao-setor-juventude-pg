@@ -17,16 +17,28 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
-import { CoordenadorDiocesano } from '@/lib/definitions'
+import { paroquias } from '@/data/setores'
+import { CoordenadorDiocesano, Organizador } from '@/lib/definitions'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
 interface CoordenacaoFormProps {
   coordenadores: CoordenadorDiocesano[]
+  representacoes: Organizador[]
 }
 
-export function CoordenacaoForm({ coordenadores }: CoordenacaoFormProps) {
+export function CoordenacaoForm({
+  coordenadores,
+  representacoes,
+}: CoordenacaoFormProps) {
   const parsedData = formSchema.parse({ coordenadores })
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -137,15 +149,28 @@ export function CoordenacaoForm({ coordenadores }: CoordenacaoFormProps) {
                   name={`coordenadores.${index}.representacao`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Representação{' '}
-                        <span className="text-xs text-rose-500">*</span>
-                      </FormLabel>
+                      <FormLabel>Representação</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Informe a representação"
-                          {...field}
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => {
+                            field.onChange(value)
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma representação" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {representacoes.map((representacao, index) => (
+                              <SelectItem
+                                key={index}
+                                value={representacao.nome}
+                              >
+                                {representacao.nome}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -156,15 +181,25 @@ export function CoordenacaoForm({ coordenadores }: CoordenacaoFormProps) {
                   name={`coordenadores.${index}.paroquia`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Paróquia{' '}
-                        <span className="text-xs text-rose-500">*</span>
-                      </FormLabel>
+                      <FormLabel>Paróquia</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Informe a paróquia de origem"
-                          {...field}
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => {
+                            field.onChange(value)
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma paróquia" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {paroquias.map((paroquia, index) => (
+                              <SelectItem key={index} value={paroquia}>
+                                {paroquia}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

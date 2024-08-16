@@ -86,14 +86,16 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
                 {movimentoPastoral.redesSociais.length > 0 ? (
                   movimentoPastoral.redesSociais.map((redeSocial, index) => (
                     <div className="flex gap-3" key={index}>
-                      <Image
-                        src={
-                          redeSocial.rede === 'Facebook'
-                            ? facebookLogo
-                            : instagramLogo
-                        }
-                        alt={''}
-                      />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
+                        <Image
+                          src={
+                            redeSocial.rede === 'Facebook'
+                              ? facebookLogo
+                              : instagramLogo
+                          }
+                          alt={''}
+                        />
+                      </div>
                       <div className="flex flex-col">
                         <span className="font-semibold">{redeSocial.rede}</span>
                         <span className="text-muted-foreground">
