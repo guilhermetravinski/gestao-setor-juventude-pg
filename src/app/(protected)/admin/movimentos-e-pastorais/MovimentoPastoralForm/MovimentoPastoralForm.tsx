@@ -1,8 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Plus, Trash, XCircle } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import InputMask from 'react-input-mask'
 import { z } from 'zod'
@@ -28,6 +31,8 @@ import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { MovimentoPastoral } from '@/lib/definitions'
+import { storage } from '@/lib/firebase'
+import { processImage } from '@/lib/processImage'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -46,6 +51,7 @@ export function MovimentoPastoralForm({
     defaultValues: {
       nome: defaultValues?.nome ?? '',
       tipo: defaultValues?.tipo,
+      avatarUrl: defaultValues?.avatarUrl ?? '',
       localAtuacao: defaultValues?.localAtuacao ?? '',
       anoFundacao: defaultValues?.anoFundacao ?? '',
       carisma: defaultValues?.carisma ?? '',
@@ -72,6 +78,28 @@ export function MovimentoPastoralForm({
     control: form.control,
     name: 'redesSociais',
   })
+
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    defaultValues?.avatarUrl ?? null,
+  )
+  const [uploading, setUploading] = useState(false)
+
+  const handleImageUpload = async (file: File | null) => {
+    if (!file) return
+    setUploading(true)
+    try {
+      const processedFile = await processImage(file)
+      const imageRef = ref(storage, `avatars/${file.name}-${Date.now()}`)
+      const snapshot = await uploadBytes(imageRef, processedFile)
+      const url = await getDownloadURL(snapshot.ref)
+      setAvatarUrl(url)
+      form.setValue('avatarUrl', url)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const currentYear = new Date().getFullYear()
   const years = Array.from(new Array(50), (val, index) => currentYear - index)
@@ -154,7 +182,41 @@ export function MovimentoPastoralForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        />{' '}
+        <div className="mb-6">
+          <FormLabel>Avatar</FormLabel>
+          <Input
+            className="mt-2"
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              handleImageUpload(e.target.files ? e.target.files[0] : null)
+            }
+            disabled={uploading}
+          />
+          {avatarUrl && (
+            <div className="mt-4 flex justify-center">
+              <Image
+                src={avatarUrl}
+                alt="Avatar"
+                width={128}
+                height={128}
+                className="rounded-full object-cover"
+              />
+              <Button
+                type="button"
+                size="icon"
+                onClick={() => {
+                  setAvatarUrl(null)
+                  form.setValue('avatarUrl', '')
+                }}
+                variant="ghost"
+              >
+                <Trash className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
         <FormField
           control={form.control}
           name="tipo"
@@ -248,7 +310,6 @@ export function MovimentoPastoralForm({
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="biografia"
@@ -461,10 +522,7 @@ export function MovimentoPastoralForm({
           <span className="mb-3 text-xs text-rose-500">
             * Campos obrigatórios
           </span>
-          <Button
-            type="submit"
-            disabled={!form.formState.isDirty || form.formState.isLoading}
-          >
+          <Button type="submit" disabled={form.formState.isLoading}>
             Salvar
           </Button>
         </div>

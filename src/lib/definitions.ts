@@ -24,6 +24,7 @@ export interface RedeSocial {
 export interface Grupo {
   id: string
   nome: string
+  avatarUrl?: string
   setor: string
   paroquia: string
   comunidade: string
@@ -43,6 +44,7 @@ export interface MovimentoPastoral {
   id: string
   nome: string
   localAtuacao: string
+  avatarUrl?: string
   tipo: 'Movimento' | 'Pastoral'
   anoFundacao?: string
   carisma?: string
@@ -61,6 +63,7 @@ export interface CoordenadorDiocesano {
   id: string
   nome: string
   telefone: string
+  avatarUrl?: string
   representacao: string
   paroquia: string
   createdAt: Date

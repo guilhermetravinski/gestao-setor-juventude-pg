@@ -1,6 +1,9 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
 
+import { ModeToggle } from '@/components/mode-toggle'
+
+import fotoInicial from '../../../../public/foto-inicial.jpg'
 // import Link from 'next/link'
 // import { buttonVariants } from '@/components/ui/button'
 // import { cn } from '@/lib/utils'
@@ -25,31 +28,36 @@ export default function AuthenticationPage() {
         >
           Login
         </Link> */}
-        <div className="flex justify-center pb-6 lg:hidden">
-          <Image
-            src={logo}
-            alt="Logo do Setor Juventude de Ponta Grossa"
-            height={36}
-            className="rounded-lg"
-            placeholder="blur"
-          />
+
+        <div className="absolute right-4 top-4 md:right-8 md:top-8">
+          <ModeToggle />
         </div>
-        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
+
+        <div className="relative hidden h-full flex-col bg-muted text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-zinc-900" />
 
-          <div className="relative z-20">
+          <div className="relative z-20 block">
             <Image
-              src={logo}
-              alt="Logo do Setor Juventude de Ponta Grossa"
-              height={36}
-              className="rounded-lg"
+              src={fotoInicial}
+              width={1920}
+              height={1080}
+              alt="Foto dos integrantes da Coordenação Diocesana do Setor Juventude de Ponta Grossa"
               placeholder="blur"
+              className="min-h-screen object-cover"
             />
           </div>
         </div>
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-            <div className="flex flex-col space-y-2 text-center">
+            <div className="flex flex-col items-center text-center">
+              <Image
+                src={logo}
+                priority
+                alt="Logo do Setor Juventude de Ponta Grossa"
+                height={44}
+                className="mb-6 rounded-lg"
+                placeholder="blur"
+              />
               <h1 className="text-2xl font-semibold tracking-tight">
                 Entre na sua conta
               </h1>

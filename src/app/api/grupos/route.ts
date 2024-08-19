@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
         nome: parsedData.nome,
         setor: parsedData.setor,
         paroquia: parsedData.paroquia,
+        avatarUrl: parsedData.avatarUrl,
         comunidade: parsedData.comunidade,
         anoFundacao: parsedData.anoFundacao,
         biografia: parsedData.biografia,

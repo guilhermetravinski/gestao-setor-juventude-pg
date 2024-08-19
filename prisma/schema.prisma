@@ -12,7 +12,7 @@ generator client {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  email         String?    @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   role          String?
@@ -109,6 +109,7 @@ model Grupo {
   setor         String
   paroquia      String
   comunidade    String
+  avatarUrl     String?
   anoFundacao   String?
   biografia     String?
   coordenadores Coordenador[]
@@ -126,6 +127,7 @@ model MovimentoPastoral {
   nome          String
   localAtuacao  String
   tipo          String
+  avatarUrl     String?
   anoFundacao   String?
   carisma       String?
   biografia     String?
@@ -144,6 +146,7 @@ model CoordenadorDiocesano {
   nome          String
   telefone      String
   paroquia      String
+  avatarUrl     String?
   representacao String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

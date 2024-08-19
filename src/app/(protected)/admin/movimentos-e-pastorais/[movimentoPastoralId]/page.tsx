@@ -34,7 +34,16 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
   )) as MovimentoPastoral
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
-      <div className="mx-auto flex w-full max-w-6xl gap-2">
+      <div className="mx-auto flex w-full max-w-6xl items-center">
+        {movimentoPastoral.avatarUrl && (
+          <Image
+            src={movimentoPastoral.avatarUrl}
+            alt="Avatar"
+            width={64}
+            height={64}
+            className="mr-3 rounded-full object-cover"
+          />
+        )}
         <div className="mr-auto">
           <h1 className="text-3xl font-semibold">{movimentoPastoral.nome}</h1>
           <h2 className="text-lg text-muted-foreground">

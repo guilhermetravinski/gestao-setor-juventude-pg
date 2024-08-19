@@ -1,8 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Plus, Trash } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import InputMask from 'react-input-mask'
 import { z } from 'zod'
@@ -27,6 +30,8 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { paroquias } from '@/data/setores'
 import { CoordenadorDiocesano, Organizador } from '@/lib/definitions'
+import { storage } from '@/lib/firebase'
+import { processImage } from '@/lib/processImage'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -52,6 +57,40 @@ export function CoordenacaoForm({
     control: form.control,
     name: 'coordenadores',
   })
+  const [avatarUrl, setAvatarUrl] = useState<string[]>(
+    parsedData.coordenadores.map((coordenador) => coordenador.avatarUrl ?? ''),
+  )
+  const [uploading, setUploading] = useState(false)
+
+  function updateAvatarUrl(index: number, newUrl: string) {
+    setAvatarUrl((prevUrls) => {
+      // Faz uma cópia do array existente
+      const updatedUrls = [...prevUrls]
+
+      // Atualiza o valor no índice específico
+      updatedUrls[index] = newUrl
+
+      // Retorna o novo array para atualizar o estado
+      return updatedUrls
+    })
+  }
+
+  const handleImageUpload = async (file: File | null, index: number) => {
+    if (!file) return
+    setUploading(true)
+    try {
+      const processedFile = await processImage(file)
+      const imageRef = ref(storage, `avatars/${file.name}-${Date.now()}`)
+      const snapshot = await uploadBytes(imageRef, processedFile)
+      const url = await getDownloadURL(snapshot.ref)
+      updateAvatarUrl(index, url)
+      form.setValue(`coordenadores.${index}.avatarUrl`, url)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+    } finally {
+      setUploading(false)
+    }
+  }
 
   // useEffect(() => {
   //   append(defaultValues.coordenadores)
@@ -122,6 +161,43 @@ export function CoordenacaoForm({
                     </FormItem>
                   )}
                 />
+                <div className="mb-6">
+                  <FormLabel>Avatar</FormLabel>
+                  <Input
+                    className="mt-2"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handleImageUpload(
+                        e.target.files ? e.target.files[0] : null,
+                        index,
+                      )
+                    }
+                    disabled={uploading}
+                  />
+                  {avatarUrl[index] && (
+                    <div className="mt-4 flex justify-center">
+                      <Image
+                        src={avatarUrl[index]}
+                        alt="Avatar"
+                        width={128}
+                        height={128}
+                        className="rounded-full object-cover"
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        onClick={() => {
+                          updateAvatarUrl(index, '')
+                          form.setValue(`coordenadores.${index}.avatarUrl`, '')
+                        }}
+                        variant="ghost"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
                 <FormField
                   control={form.control}
                   name={`coordenadores.${index}.telefone`}
@@ -149,7 +225,10 @@ export function CoordenacaoForm({
                   name={`coordenadores.${index}.representacao`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Representação</FormLabel>
+                      <FormLabel>
+                        Representação{' '}
+                        <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Select
                           value={field.value}
@@ -181,7 +260,10 @@ export function CoordenacaoForm({
                   name={`coordenadores.${index}.paroquia`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Paróquia</FormLabel>
+                      <FormLabel>
+                        Paróquia{' '}
+                        <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Select
                           value={field.value}
@@ -240,10 +322,7 @@ export function CoordenacaoForm({
           <span className="mb-3 text-xs text-rose-500">
             * Campos obrigatórios
           </span>
-          <Button
-            type="submit"
-            disabled={!form.formState.isDirty || form.formState.isLoading}
-          >
+          <Button type="submit" disabled={form.formState.isLoading}>
             Salvar coordenadores
           </Button>
         </div>

@@ -11,7 +11,7 @@ export default function NavLink({
   children: React.ReactNode
 }) {
   const segment = usePathname()
-  const isActive = slug === segment
+  const isActive = segment.includes(slug)
 
   return (
     <Link

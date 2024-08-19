@@ -1,8 +1,10 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import NextAuth, { AuthOptions } from 'next-auth'
 import { Adapter } from 'next-auth/adapters'
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
 
+import { auth } from '@/lib/firebase'
 import prisma from '@/lib/prisma'
 
 const authOptions: AuthOptions = {
@@ -47,12 +49,23 @@ const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       return { ...token, ...user }
     },
-    async signIn({ profile }) {
+    async signIn({ profile, account }) {
       const allowedEmail = 'guitrafer@gmail.com'
+
       if (profile?.email && profile?.email === allowedEmail) {
-        return true // Permitir login
+        if (account?.provider === 'google' && account.id_token) {
+          const credential = GoogleAuthProvider.credential(account.id_token)
+          try {
+            await signInWithCredential(auth, credential)
+            return true
+          } catch (error) {
+            console.error('Erro ao autenticar no Firebase:', error)
+            return false
+          }
+        }
+        return true
       } else {
-        return false // Negar login
+        return false
       }
     },
     async session({ session, token }) {

@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
         nome: parsedData.nome,
         tipo: parsedData.tipo,
         carisma: parsedData.carisma,
+        avatarUrl: parsedData.avatarUrl,
         localAtuacao: parsedData.localAtuacao,
         anoFundacao: parsedData.anoFundacao,
         biografia: parsedData.biografia,

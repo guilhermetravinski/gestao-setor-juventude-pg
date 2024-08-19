@@ -11,6 +11,7 @@ const updateSchema = z.object({
       paroquia: z.string({ message: 'Campo obrigatório' }).min(3, {
         message: 'O campo deve ter pelo menos 3 caracteres.',
       }),
+      avatarUrl: z.string().nullable().optional(),
       representacao: z.string({ message: 'Campo obrigatório' }).min(3, {
         message: 'O campo deve ter pelo menos 3 caracteres.',
       }),

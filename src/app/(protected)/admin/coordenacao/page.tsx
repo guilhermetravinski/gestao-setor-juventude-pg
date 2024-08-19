@@ -48,6 +48,7 @@ export default async function CoordenacaoPage() {
             nome={coordenador.nome}
             paroquia={coordenador.paroquia}
             telefone={coordenador.telefone}
+            avatarUrl={coordenador.avatarUrl ?? ''}
           />
         ))}
       </div>
@@ -60,20 +61,19 @@ interface CardCoordenadorProps {
   telefone: string
   representacao: string
   paroquia: string
+  avatarUrl: string
 }
 async function CardCoordenador({
   nome,
   telefone,
   representacao,
   paroquia,
+  avatarUrl,
 }: CardCoordenadorProps) {
   return (
     <div className="flex rounded-full bg-background p-6 shadow sm:p-0">
       <Avatar className="hidden h-32 w-32 sm:flex">
-        <AvatarImage
-          src="https://github.com/guilhermetravinski.pnga"
-          alt="Avatar"
-        />
+        <AvatarImage src={avatarUrl} alt="Avatar" />
         <AvatarFallback className="text-4xl">
           {getInitials(nome)}
         </AvatarFallback>
