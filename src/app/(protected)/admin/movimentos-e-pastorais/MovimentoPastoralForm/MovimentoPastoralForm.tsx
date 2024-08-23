@@ -369,6 +369,21 @@ export function MovimentoPastoralForm({
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name={`coordenadores.${index}.email`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        E-mail <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="E-mail do coordenador" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <Button
                 type="button"
@@ -384,7 +399,7 @@ export function MovimentoPastoralForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => append({ nome: '', telefone: '' })}
+                onClick={() => append({ nome: '', telefone: '', email: '' })}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Coordenador

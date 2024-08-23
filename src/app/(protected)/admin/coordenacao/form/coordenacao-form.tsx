@@ -222,6 +222,21 @@ export function CoordenacaoForm({
                 />
                 <FormField
                   control={form.control}
+                  name={`coordenadores.${index}.email`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        E-mail <span className="text-xs text-rose-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="E-mail do coordenador" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name={`coordenadores.${index}.representacao`}
                   render={({ field }) => (
                     <FormItem>
@@ -308,6 +323,7 @@ export function CoordenacaoForm({
                     nome: '',
                     representacao: '',
                     telefone: '',
+                    email: '',
                     paroquia: '',
                   })
                 }

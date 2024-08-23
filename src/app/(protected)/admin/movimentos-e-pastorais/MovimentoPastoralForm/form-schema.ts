@@ -28,6 +28,9 @@ export const formSchema = z.object({
           .regex(/^\(\d{2}\) \d{5}-\d{4}$/, {
             message: 'O telefone deve estar no formato (99) 99999-9999.',
           }),
+        email: z
+          .string({ message: 'Campo obrigatório' })
+          .email({ message: 'E-mail inválido' }),
       }),
     )
     .optional(),

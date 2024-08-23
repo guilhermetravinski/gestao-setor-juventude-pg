@@ -24,6 +24,7 @@ model User {
 }
 
 model Account {
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -41,7 +42,7 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
@@ -66,6 +67,7 @@ model Coordenador {
   id                  String             @id @default(uuid())
   nome                String
   telefone            String
+  email               String
   grupoId             String?
   grupo               Grupo?             @relation(fields: [grupoId], references: [id])
   createdAt           DateTime           @default(now())
@@ -145,6 +147,7 @@ model CoordenadorDiocesano {
   id            String   @id @default(uuid())
   nome          String
   telefone      String
+  email         String
   paroquia      String
   avatarUrl     String?
   representacao String
