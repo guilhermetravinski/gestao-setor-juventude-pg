@@ -34,6 +34,7 @@ import { setores } from '@/data/setores'
 import { Grupo } from '@/lib/definitions'
 import { storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
+import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -131,6 +132,13 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
       })
 
       if (response.ok) {
+        if (values.coordenadores) {
+          const emailsCoordenadores = values.coordenadores.map(
+            (coordenador) => coordenador.email,
+          )
+          await sendEmailsWithLog(emailsCoordenadores)
+        }
+
         toast({
           variant: 'success',
           title: `Grupo ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,

@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
               create: parsedData.coordenadores.map((coordenador) => ({
                 nome: coordenador.nome,
                 telefone: coordenador.telefone,
+                email: coordenador.email,
               })),
             }
           : undefined,

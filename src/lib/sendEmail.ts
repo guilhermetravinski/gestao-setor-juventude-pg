@@ -1,6 +1,11 @@
 import nodemailer from 'nodemailer'
 
-export async function sendEmail(to: string, subject: string, text: string) {
+export async function sendEmail(
+  to: string,
+  subject: string,
+  html: string,
+  text?: string,
+) {
   // Configura o transporte do nodemailer usando o SMTP do Gmail
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -17,7 +22,8 @@ export async function sendEmail(to: string, subject: string, text: string) {
     from: `Seu Nome <${process.env.GMAIL_USER}>`,
     to,
     subject,
-    text,
+    text, // Texto puro (opcional)
+    html, // HTML formatado
   }
 
   // Envia o e-mail

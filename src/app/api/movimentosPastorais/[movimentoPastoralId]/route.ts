@@ -91,10 +91,12 @@ export async function PUT(
                 update: {
                   nome: coordenador.nome,
                   telefone: coordenador.telefone,
+                  email: coordenador.email,
                 },
                 create: {
                   nome: coordenador.nome,
                   telefone: coordenador.telefone,
+                  email: coordenador.email,
                 },
               })),
             }

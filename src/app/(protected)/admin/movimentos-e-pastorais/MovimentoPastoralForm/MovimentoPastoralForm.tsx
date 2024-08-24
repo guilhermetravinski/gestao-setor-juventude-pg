@@ -33,6 +33,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { MovimentoPastoral } from '@/lib/definitions'
 import { storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
+import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -123,6 +124,12 @@ export function MovimentoPastoralForm({
       })
 
       if (response.ok) {
+        if (values.coordenadores) {
+          const emailsCoordenadores = values.coordenadores.map(
+            (coordenador) => coordenador.email,
+          )
+          await sendEmailsWithLog(emailsCoordenadores)
+        }
         toast({
           variant: 'success',
           title: `Movimento ou pastoral ${mode === 'new' ? 'cadastrado' : 'atualizado'} com sucesso`,
@@ -374,9 +381,6 @@ export function MovimentoPastoralForm({
                   name={`coordenadores.${index}.email`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        E-mail <span className="text-xs text-rose-500">*</span>
-                      </FormLabel>
                       <FormControl>
                         <Input placeholder="E-mail do coordenador" {...field} />
                       </FormControl>

@@ -32,6 +32,7 @@ import { paroquias } from '@/data/setores'
 import { CoordenadorDiocesano, Organizador } from '@/lib/definitions'
 import { storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
+import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -110,6 +111,12 @@ export function CoordenacaoForm({
       })
 
       if (response.ok) {
+        if (values.coordenadores) {
+          const emailsCoordenadores = values.coordenadores.map(
+            (coordenador) => coordenador.email,
+          )
+          await sendEmailsWithLog(emailsCoordenadores)
+        }
         toast({
           variant: 'success',
           title: `Coordenadores editados com sucesso`,
