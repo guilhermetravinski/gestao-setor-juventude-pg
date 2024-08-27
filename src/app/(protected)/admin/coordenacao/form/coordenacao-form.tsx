@@ -5,7 +5,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Plus, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import InputMask from 'react-input-mask'
 import { z } from 'zod'
@@ -65,13 +65,8 @@ export function CoordenacaoForm({
 
   function updateAvatarUrl(index: number, newUrl: string) {
     setAvatarUrl((prevUrls) => {
-      // Faz uma cópia do array existente
       const updatedUrls = [...prevUrls]
-
-      // Atualiza o valor no índice específico
       updatedUrls[index] = newUrl
-
-      // Retorna o novo array para atualizar o estado
       return updatedUrls
     })
   }
@@ -93,21 +88,38 @@ export function CoordenacaoForm({
     }
   }
 
-  // useEffect(() => {
-  //   append(defaultValues.coordenadores)
-  // }, [defaultValues, append])
+  const handleAddCoordenador = () => {
+    append({
+      nome: '',
+      representacao: '',
+      telefone: '',
+      email: '',
+      paroquia: '',
+    })
+    // Atualiza paroquiasPorCoordenador adicionando as paróquias padrão
+    setParoquiasPorCoordenador((prevState) => [...prevState, totalParoquias])
+  }
 
-  const [selectedSetor, setSelectedSetor] = useState<string>('')
-  const [paroquias, setParoquias] = useState<string[]>([])
+  const [paroquiasPorCoordenador, setParoquiasPorCoordenador] = useState<
+    string[][]
+  >(fields.map(() => totalParoquias))
 
-  useEffect(() => {
-    if (selectedSetor.includes('Setor')) {
-      const setorData = setores.find((setor) => setor.label === selectedSetor)
-      setParoquias(setorData ? setorData.paroquias : [])
+  const handleRepresentationChange = (value: string, index: number) => {
+    let novasParoquias: string[] = []
+
+    if (value.includes('Setor')) {
+      const setorData = setores.find((setor) => setor.label === value)
+      novasParoquias = setorData ? setorData.paroquias : []
     } else {
-      setParoquias(totalParoquias)
+      novasParoquias = totalParoquias
     }
-  }, [selectedSetor])
+
+    setParoquiasPorCoordenador((prevState) => {
+      const updatedParoquias = [...prevState]
+      updatedParoquias[index] = novasParoquias
+      return updatedParoquias
+    })
+  }
 
   const router = useRouter()
 
@@ -268,18 +280,15 @@ export function CoordenacaoForm({
                           value={field.value}
                           onValueChange={(value) => {
                             field.onChange(value)
-                            setSelectedSetor(value)
+                            handleRepresentationChange(value, index)
                           }}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione uma representação" />
                           </SelectTrigger>
                           <SelectContent>
-                            {representacoes.map((representacao, index) => (
-                              <SelectItem
-                                key={index}
-                                value={representacao.nome}
-                              >
+                            {representacoes.map((representacao, i) => (
+                              <SelectItem key={i} value={representacao.nome}>
                                 {representacao.nome}
                               </SelectItem>
                             ))}
@@ -302,19 +311,19 @@ export function CoordenacaoForm({
                       <FormControl>
                         <Select
                           value={field.value}
-                          onValueChange={(value) => {
-                            field.onChange(value)
-                          }}
+                          onValueChange={field.onChange}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione uma paróquia" />
                           </SelectTrigger>
                           <SelectContent>
-                            {paroquias.map((paroquia, index) => (
-                              <SelectItem key={index} value={paroquia}>
-                                {paroquia}
-                              </SelectItem>
-                            ))}
+                            {paroquiasPorCoordenador[index].map(
+                              (paroquia, i) => (
+                                <SelectItem key={i} value={paroquia}>
+                                  {paroquia}
+                                </SelectItem>
+                              ),
+                            )}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -338,15 +347,7 @@ export function CoordenacaoForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() =>
-                  append({
-                    nome: '',
-                    representacao: '',
-                    telefone: '',
-                    email: '',
-                    paroquia: '',
-                  })
-                }
+                onClick={handleAddCoordenador}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar coordenador
