@@ -47,17 +47,19 @@ export function EventosProximosDropdown({ eventos }: EventsDropdownProps) {
         <div className="flex max-h-96 w-64 flex-col gap-1 overflow-auto">
           {eventos.length > 0 ? (
             eventos.map((event) => (
-              <div key={event.id} className="flex pl-1">
-                <TooltipTipoEvento evento={event} />
+              <div key={event.id} className="flex">
                 <DropdownMenuItem
-                  className="ml-2 flex w-full flex-col items-start gap-2"
+                  className="flex w-full items-center gap-3"
                   onClick={() => handleRedirect(event)}
                 >
-                  <span>{event.titulo}</span>
+                  <TooltipTipoEvento evento={event} />
+                  <div className="flex flex-col">
+                    <span>{event.titulo}</span>
 
-                  <span className="text-xs text-gray-500">
-                    {format(new Date(event.dataInicio), 'dd/MM/yyyy - HH:mm')}
-                  </span>
+                    <span className="text-xs text-gray-500">
+                      {format(new Date(event.dataInicio), 'dd/MM/yyyy - HH:mm')}
+                    </span>
+                  </div>
                 </DropdownMenuItem>
               </div>
             ))
