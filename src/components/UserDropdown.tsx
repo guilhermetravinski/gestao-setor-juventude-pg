@@ -19,7 +19,7 @@ export function UserDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="icon" className="rounded-full">
+        <Button variant="outline" size="icon">
           <CircleUser className="h-5 w-5" />
           <span className="sr-only">Menu de alternar usuário</span>
         </Button>

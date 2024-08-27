@@ -1,11 +1,13 @@
 interface Setor {
   setor: number
+  label: string
   paroquias: string[]
 }
 
 export const setores: Setor[] = [
   {
     setor: 1,
+    label: 'Setor 1',
     paroquias: [
       'Reitoria do Sagrado Coração de Jesus (Ponta Grossa)',
       'Paróquia Nossa Senhora do Rosário (Ponta Grossa)',
@@ -19,6 +21,7 @@ export const setores: Setor[] = [
   },
   {
     setor: 2,
+    label: 'Setor 2',
     paroquias: [
       'Paróquia Espírito Santo (Ponta Grossa)',
       'Paróquia Nossa Senhora da Saúde (Ponta Grossa)',
@@ -30,6 +33,7 @@ export const setores: Setor[] = [
   },
   {
     setor: 3,
+    label: 'Setor 3',
     paroquias: [
       'Paróquia Imaculada Conceição (Ponta Grossa)',
       'Paróquia Senhor Bom Jesus (Ponta Grossa)',
@@ -40,6 +44,7 @@ export const setores: Setor[] = [
   },
   {
     setor: 4,
+    label: 'Setor 4',
     paroquias: [
       'Paróquia São Jorge (Ponta Grossa)',
       'Paróquia Nossa Senhora do Guadalupe (Ponta Grossa)',
@@ -52,6 +57,7 @@ export const setores: Setor[] = [
   },
   {
     setor: 5,
+    label: 'Setor 5',
     paroquias: [
       'Paróquia São Judas Tadeu (Castro)',
       'Paróquia Nossa Senhora do Perpétuo Socorro (Castro)',
@@ -63,6 +69,7 @@ export const setores: Setor[] = [
   },
   {
     setor: 6,
+    label: 'Setor 6',
     paroquias: [
       'Paróquia Santo Antônio (Imbituva)',
       'Paróquia Nossa Senhora da Conceição (Ipiranga)',
@@ -72,6 +79,7 @@ export const setores: Setor[] = [
   },
   {
     setor: 7,
+    label: 'Setor 7',
     paroquias: [
       'Paróquia São João Batista (Irati)',
       'Paróquia São Sebastião (Fernandes Pinheiro)',
@@ -83,6 +91,7 @@ export const setores: Setor[] = [
   },
   {
     setor: 8,
+    label: 'Setor 8',
     paroquias: [
       'Paróquia São José (Imbaú)',
       'Paróquia Menino Jesus (Reserva)',

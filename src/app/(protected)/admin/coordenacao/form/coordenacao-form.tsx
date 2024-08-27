@@ -5,7 +5,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Plus, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import InputMask from 'react-input-mask'
 import { z } from 'zod'
@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
-import { paroquias } from '@/data/setores'
+import { paroquias as totalParoquias, setores } from '@/data/setores'
 import { CoordenadorDiocesano, Organizador } from '@/lib/definitions'
 import { storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
@@ -96,6 +96,18 @@ export function CoordenacaoForm({
   // useEffect(() => {
   //   append(defaultValues.coordenadores)
   // }, [defaultValues, append])
+
+  const [selectedSetor, setSelectedSetor] = useState<string>('')
+  const [paroquias, setParoquias] = useState<string[]>([])
+
+  useEffect(() => {
+    if (selectedSetor.includes('Setor')) {
+      const setorData = setores.find((setor) => setor.label === selectedSetor)
+      setParoquias(setorData ? setorData.paroquias : [])
+    } else {
+      setParoquias(totalParoquias)
+    }
+  }, [selectedSetor])
 
   const router = useRouter()
 
@@ -256,6 +268,7 @@ export function CoordenacaoForm({
                           value={field.value}
                           onValueChange={(value) => {
                             field.onChange(value)
+                            setSelectedSetor(value)
                           }}
                         >
                           <SelectTrigger>

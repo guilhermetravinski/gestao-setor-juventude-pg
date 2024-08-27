@@ -11,3 +11,13 @@ export async function getEventos() {
   }
   return res.json()
 }
+
+export async function getEventosProximos() {
+  const res = await fetch(`${API_BASE_URL}/api/eventos/proximos`, {
+    cache: 'no-store',
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao buscar eventos próximos')
+  }
+  return res.json()
+}

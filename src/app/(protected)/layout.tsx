@@ -2,10 +2,12 @@ import { Menu, Package2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { EventosProximosDropdown } from '@/components/EventosProximosDropdown'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { UserDropdown } from '@/components/UserDropdown'
+import { getEventosProximos } from '@/lib/api/eventos'
 
 import logo from '../../../public/logo.png'
 import NavLink from './nav-link'
@@ -15,6 +17,8 @@ export default async function ProtectedLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const eventosProximos = await getEventosProximos()
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -82,6 +86,7 @@ export default async function ProtectedLayout({
             </SheetContent>
           </Sheet>
           <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
+            <EventosProximosDropdown eventos={eventosProximos} />
             <ModeToggle />
             <UserDropdown />
           </div>

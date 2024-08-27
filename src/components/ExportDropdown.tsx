@@ -149,7 +149,7 @@ export function ExportDropdown<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={handleExportClickPDF} disabled>
+        <DropdownMenuItem onClick={handleExportClickPDF}>
           <FileText className="mr-2 h-4 w-4" />
           PDF
         </DropdownMenuItem>

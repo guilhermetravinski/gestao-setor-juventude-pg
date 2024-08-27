@@ -9,23 +9,13 @@ import { useSearchParams } from 'next/navigation'
 // import { DateRange } from 'react-day-picker'
 import { DeleteEventoDialog } from '@/components/DeleteEventoDialog'
 import { ExportDropdown } from '@/components/ExportDropdown'
+import { TooltipTipoEvento } from '@/components/TooltipTipoEvento'
 // import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { Evento, Organizador } from '@/lib/definitions'
 
 import { DialogEvento } from './DialogEvento'
 import { MonthNavigator } from './MonthNavigator'
-
-interface EventoTooltipData {
-  colorClass: string
-  content: string
-}
 
 interface EventosListProps {
   organizadoresApi: Organizador[]
@@ -47,19 +37,6 @@ export function EventosList({ organizadoresApi, eventos }: EventosListProps) {
     }
     return true // Sem filtro, retorna todos os eventos
   })
-
-  function getEventoTooltipData(organizador: string): EventoTooltipData {
-    if (organizador.includes('etor Juventude')) {
-      return { colorClass: 'bg-primary', content: 'Evento diocesano' }
-    } else if (organizador.includes('Setor')) {
-      return { colorClass: 'bg-rose-400', content: 'Evento setorial' }
-    } else {
-      return {
-        colorClass: 'bg-yellow-400',
-        content: 'Evento de grupo ou movimento',
-      }
-    }
-  }
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col-reverse items-start gap-6 md:flex-row">
@@ -89,26 +66,7 @@ export function EventosList({ organizadoresApi, eventos }: EventosListProps) {
                   <Card key={index}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0">
                       <div className="flex items-center gap-2">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <div
-                                className={`h-3 w-3 rounded-full ${
-                                  getEventoTooltipData(evento.organizador)
-                                    .colorClass
-                                }`}
-                              ></div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>
-                                {
-                                  getEventoTooltipData(evento.organizador)
-                                    .content
-                                }
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <TooltipTipoEvento evento={evento} />
 
                         <CardTitle>{evento.titulo}</CardTitle>
                       </div>
