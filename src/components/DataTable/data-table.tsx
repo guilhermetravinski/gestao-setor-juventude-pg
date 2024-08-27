@@ -12,7 +12,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table'
-import { Filter, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -29,6 +29,7 @@ import {
 
 import { ExportDropdown } from '../ExportDropdown'
 import { DataTablePagination } from './data-table-pagination'
+import { FilterBySetorAndParoquia } from './FilterDropdown'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -94,9 +95,7 @@ export function DataTable<TData, TValue>({
         >
           <Plus className="mr-2 h-4 w-4" /> Adicionar
         </Button>
-        <Button className="ml-3" variant="outline" disabled>
-          <Filter className="mr-2 h-4 w-4" /> Filtrar
-        </Button>
+        {type === 'grupos' && <FilterBySetorAndParoquia table={table} />}
         <ExportDropdown
           data={getFilteredData()}
           type={type}

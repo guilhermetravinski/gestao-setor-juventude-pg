@@ -144,7 +144,7 @@ export function ExportDropdown<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="ml-3" variant="outline" disabled={disabled}>
+        <Button className="ml-2" variant="outline" disabled={disabled}>
           <Download className="mr-2 h-4 w-4" /> Exportar
         </Button>
       </DropdownMenuTrigger>
