@@ -5,7 +5,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { Plus, Trash, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import InputMask from 'react-input-mask'
 import { z } from 'zod'
@@ -44,6 +44,8 @@ interface GrupoFormProps {
 }
 
 export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
+  const fileInputRef = useRef<HTMLInputElement | null>(null) // Add this line at the top of your component
+
   const form = useForm<FormSchemaType>({
     mode: 'all',
     resolver: zodResolver(formSchema),
@@ -77,26 +79,16 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
     control: form.control,
     name: 'redesSociais',
   })
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     defaultValues?.avatarUrl ?? null,
   )
   const [uploading, setUploading] = useState(false)
 
-  const handleImageUpload = async (file: File | null) => {
+  const handleImageChange = (file: File | null) => {
     if (!file) return
-    setUploading(true)
-    try {
-      const processedFile = await processImage(file)
-      const imageRef = ref(storage, `avatars/${file.name}-${Date.now()}`)
-      const snapshot = await uploadBytes(imageRef, processedFile)
-      const url = await getDownloadURL(snapshot.ref)
-      setAvatarUrl(url)
-      form.setValue('avatarUrl', url)
-    } catch (error) {
-      console.error('Error uploading image:', error)
-    } finally {
-      setUploading(false)
-    }
+    setAvatarFile(file)
+    setAvatarUrl(URL.createObjectURL(file)) // Show a preview of the image
   }
 
   const [selectedSetor, setSelectedSetor] = useState(defaultValues?.setor ?? '')
@@ -104,6 +96,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
   const currentYear = new Date().getFullYear()
   const years = Array.from(new Array(50), (val, index) => currentYear - index)
   const router = useRouter()
+
   useEffect(() => {
     if (selectedSetor) {
       const setorData = setores.find(
@@ -119,6 +112,20 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      let uploadedUrl = avatarUrl
+
+      if (avatarFile) {
+        setUploading(true)
+        const processedFile = await processImage(avatarFile) // Use the file directly, or process it as needed
+        const imageRef = ref(
+          storage,
+          `avatars/${avatarFile.name}-${Date.now()}`,
+        )
+        const snapshot = await uploadBytes(imageRef, processedFile)
+        uploadedUrl = await getDownloadURL(snapshot.ref)
+        form.setValue('avatarUrl', uploadedUrl)
+      }
+
       const url =
         mode === 'new'
           ? `${API_BASE_URL}/api/grupos`
@@ -128,7 +135,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, avatarUrl: uploadedUrl }),
       })
 
       if (response.ok) {
@@ -165,6 +172,8 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
         duration: 3000,
       })
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -202,11 +211,12 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         <div className="mb-6">
           <FormLabel>Avatar</FormLabel>
           <Input
+            ref={fileInputRef}
             className="mt-2"
             type="file"
             accept="image/*"
             onChange={(e) =>
-              handleImageUpload(e.target.files ? e.target.files[0] : null)
+              handleImageChange(e.target.files ? e.target.files[0] : null)
             }
             disabled={uploading}
           />
@@ -223,8 +233,12 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                 type="button"
                 size="icon"
                 onClick={() => {
+                  setAvatarFile(null)
                   setAvatarUrl(null)
                   form.setValue('avatarUrl', '')
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '' // Reset the file input
+                  }
                 }}
                 variant="ghost"
               >
@@ -398,10 +412,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                           value={field.value}
                           onChange={field.onChange}
                         >
-                          <Input
-                            placeholder="Telefone do coordenador"
-                            // {...field}
-                          />
+                          <Input placeholder="Telefone do coordenador" />
                         </InputMask>
                       </FormControl>
                       <FormMessage />
