@@ -13,7 +13,7 @@ export async function GET(
 ) {
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const { movimentoPastoralId } = params
 
@@ -48,7 +48,7 @@ export async function POST(
 ) {
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
     const { movimentoPastoralId } = params

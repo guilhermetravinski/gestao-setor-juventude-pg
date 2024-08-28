@@ -1,5 +1,6 @@
 'use client'
 
+import Cookies from 'js-cookie'
 import { Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -37,8 +38,13 @@ export function DeleteEventoDialog({ eventoId }: DeleteEventoDialogProps) {
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
+      const token = Cookies.get('next-auth.session-token')
       const response = await fetch(`${API_BASE_URL}/api/eventos/${eventoId}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho Authorization
+        },
       })
 
       if (response.ok) {

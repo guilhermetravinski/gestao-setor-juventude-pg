@@ -22,7 +22,7 @@ export async function PUT(
 ) {
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const { eventoId } = params
 
@@ -73,7 +73,7 @@ export async function DELETE(
   const { eventoId } = params
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {

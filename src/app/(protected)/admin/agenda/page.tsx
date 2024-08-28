@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers'
+
 import { getEventos } from '@/lib/api/eventos'
 import { getGrupos } from '@/lib/api/grupos'
 import { getMovimentosPastorais } from '@/lib/api/movimentosPastorais'
@@ -11,10 +13,13 @@ import {
 import { EventosList } from './EventosList'
 
 export default async function AgendaPage() {
-  const eventos = (await getEventos()) as Evento[]
-  const grupos = (await getGrupos()) as Grupo[]
-  const movimentosPastorais =
-    (await getMovimentosPastorais()) as MovimentoPastoral[]
+  const cookieStore = cookies()
+  const token = cookieStore.get('next-auth.session-token')
+  const eventos = (await getEventos(token?.value ?? '')) as Evento[]
+  const grupos = (await getGrupos(token?.value ?? '')) as Grupo[]
+  const movimentosPastorais = (await getMovimentosPastorais(
+    token?.value ?? '',
+  )) as MovimentoPastoral[]
 
   const organizadoresApi = [
     { nome: 'Setor Juventude', tipo: 'diocesano' },

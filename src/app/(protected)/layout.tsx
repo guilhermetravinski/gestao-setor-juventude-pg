@@ -1,4 +1,5 @@
 import { Menu, Package2 } from 'lucide-react'
+import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -17,7 +18,9 @@ export default async function ProtectedLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const eventosProximos = await getEventosProximos()
+  const cookieStore = cookies()
+  const token = cookieStore.get('next-auth.session-token')
+  const eventosProximos = await getEventosProximos(token?.value ?? '')
 
   return (
     <div className="flex min-h-screen w-full flex-col">

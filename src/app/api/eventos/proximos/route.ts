@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   // Verifica o token de autenticação
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {

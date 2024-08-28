@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import Cookies from 'js-cookie'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
@@ -152,6 +153,7 @@ export function FormEvento({
 
   async function onSubmit(values: EventFormData) {
     try {
+      const token = Cookies.get('next-auth.session-token')
       const url =
         mode === 'new'
           ? `${API_BASE_URL}/api/eventos`
@@ -161,6 +163,7 @@ export function FormEvento({
         method: mode === 'new' ? 'POST' : 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho Authorization
         },
         body: JSON.stringify(values),
       })

@@ -1,4 +1,5 @@
 import { File, Pencil } from 'lucide-react'
+import { cookies } from 'next/headers'
 import Link from 'next/link'
 
 import { ExportDropdown } from '@/components/ExportDropdown'
@@ -9,7 +10,11 @@ import { CoordenadorDiocesano } from '@/lib/definitions'
 import { getInitials } from '@/lib/utils'
 
 export default async function CoordenacaoPage() {
-  const coordenacao = (await getCoordenadores()) as CoordenadorDiocesano[]
+  const cookieStore = cookies()
+  const token = cookieStore.get('next-auth.session-token')
+  const coordenacao = (await getCoordenadores(
+    token?.value ?? '',
+  )) as CoordenadorDiocesano[]
 
   return (
     <main className="flex flex-1 flex-col gap-8 bg-muted/40 p-10">

@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import Cookies from 'js-cookie'
 import { Plus, Trash, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -125,7 +126,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         uploadedUrl = await getDownloadURL(snapshot.ref)
         form.setValue('avatarUrl', uploadedUrl)
       }
-
+      const token = Cookies.get('next-auth.session-token')
       const url =
         mode === 'new'
           ? `${API_BASE_URL}/api/grupos`
@@ -134,6 +135,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         method: mode === 'new' ? 'POST' : 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho Authorization
         },
         body: JSON.stringify({ ...values, avatarUrl: uploadedUrl }),
       })

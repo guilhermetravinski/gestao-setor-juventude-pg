@@ -1,4 +1,5 @@
 import { File, Pencil } from 'lucide-react'
+import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -29,9 +30,12 @@ interface GrupoPageProps {
 }
 
 export default async function GrupoPage({ params }: GrupoPageProps) {
+  const cookieStore = cookies()
+  const token = cookieStore.get('next-auth.session-token')
+
   const { grupoId } = params
-  const grupo = (await getGrupoById(grupoId)) as Grupo
-  const atas = (await getAtasById(grupoId)) as Ata[]
+  const grupo = (await getGrupoById(grupoId, token?.value ?? '')) as Grupo
+  const atas = (await getAtasById(grupoId, token?.value ?? '')) as Ata[]
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
       <div className="mx-auto flex w-full max-w-6xl items-center">

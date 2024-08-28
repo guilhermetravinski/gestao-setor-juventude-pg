@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers'
+
 import { getCoordenadores } from '@/lib/api/coordenadoresDiocesanos'
 import { getGrupos } from '@/lib/api/grupos'
 import { getMovimentosPastorais } from '@/lib/api/movimentosPastorais'
@@ -11,11 +13,16 @@ import {
 import { CoordenacaoForm } from '../form/coordenacao-form'
 
 export default async function EditarCoordenacaoPage() {
-  const coordenadores = (await getCoordenadores()) as CoordenadorDiocesano[]
+  const cookieStore = cookies()
+  const token = cookieStore.get('next-auth.session-token')
+  const coordenadores = (await getCoordenadores(
+    token?.value ?? '',
+  )) as CoordenadorDiocesano[]
 
-  const grupos = (await getGrupos()) as Grupo[]
-  const movimentosPastorais =
-    (await getMovimentosPastorais()) as MovimentoPastoral[]
+  const grupos = (await getGrupos(token?.value ?? '')) as Grupo[]
+  const movimentosPastorais = (await getMovimentosPastorais(
+    token?.value ?? '',
+  )) as MovimentoPastoral[]
 
   const representacoes = [
     { nome: 'Setor Juventude', tipo: 'diocesano' },

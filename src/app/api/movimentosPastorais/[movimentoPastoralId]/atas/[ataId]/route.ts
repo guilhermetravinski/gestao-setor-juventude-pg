@@ -13,7 +13,7 @@ export async function GET(
 ) {
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const { id } = params
   try {
@@ -43,7 +43,7 @@ export async function PUT(
 ) {
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const { ataId } = params
 
@@ -80,7 +80,7 @@ export async function DELETE(
 ) {
   const token = await getToken({ req: request })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const { ataId } = params
 

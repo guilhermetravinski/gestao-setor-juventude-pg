@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     req: request,
   })
   if (!token) {
-    // return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
@@ -53,6 +53,12 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  const token = await getToken({
+    req: request,
+  })
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   try {
     const body = await request.json()
     const parsedData = updateSchema.parse(body)

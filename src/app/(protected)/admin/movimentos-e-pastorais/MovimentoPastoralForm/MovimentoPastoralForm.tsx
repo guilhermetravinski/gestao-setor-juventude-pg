@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import Cookies from 'js-cookie'
 import { Plus, Trash, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -110,6 +111,7 @@ export function MovimentoPastoralForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      const token = Cookies.get('next-auth.session-token')
       const url =
         mode === 'new'
           ? `${API_BASE_URL}/api/movimentosPastorais`
@@ -119,6 +121,7 @@ export function MovimentoPastoralForm({
         method: mode === 'new' ? 'POST' : 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho Authorization
         },
         body: JSON.stringify(values),
       })

@@ -2,9 +2,16 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-export async function getAtasById(id: string) {
+export async function getAtasById(id: string, token: string) {
+  if (!token) {
+    throw new Error('Unauthorized')
+  }
+
   const res = await fetch(`${API_BASE_URL}/api/grupos/${id}/atas`, {
     cache: 'no-store',
+    headers: {
+      Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho Authorization
+    },
   })
 
   if (!res.ok) {

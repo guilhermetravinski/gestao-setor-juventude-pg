@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers'
+
 import { getMovimentoPastoralById } from '@/lib/api/movimentosPastorais'
 import { MovimentoPastoral } from '@/lib/definitions'
 
@@ -10,8 +12,11 @@ export default async function EditarMovimentoPastoralPage({
   params,
 }: MovimentoPastoralPageProps) {
   const { movimentoPastoralId } = params
+  const cookieStore = cookies()
+  const token = cookieStore.get('next-auth.session-token')
   const grupo = (await getMovimentoPastoralById(
     movimentoPastoralId,
+    token?.value ?? '',
   )) as MovimentoPastoral
   return (
     <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-6 bg-muted/40 p-6 md:gap-8 md:p-10">
