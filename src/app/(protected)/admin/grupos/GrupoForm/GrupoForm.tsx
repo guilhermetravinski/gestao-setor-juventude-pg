@@ -1,11 +1,13 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import Cookies from 'js-cookie'
 import { Plus, Trash, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { useEffect, useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import InputMask from 'react-input-mask'
@@ -33,7 +35,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { setores } from '@/data/setores'
 import { Grupo } from '@/lib/definitions'
-import { storage } from '@/lib/firebase'
+import { auth, storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
 import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
 
@@ -66,6 +68,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
     },
   })
   const { toast } = useToast()
+  const { data: session } = useSession()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -114,8 +117,9 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       let uploadedUrl = avatarUrl
-
       if (avatarFile) {
+        const credential = GoogleAuthProvider.credential(session?.id_token)
+        await signInWithCredential(auth, credential)
         setUploading(true)
         const processedFile = await processImage(avatarFile) // Use the file directly, or process it as needed
         const imageRef = ref(
@@ -169,6 +173,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         })
       }
     } catch (error) {
+      console.log(error)
       toast({
         variant: 'destructive',
         title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,

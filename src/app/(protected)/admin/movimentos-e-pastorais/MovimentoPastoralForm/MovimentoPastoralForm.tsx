@@ -1,11 +1,13 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import Cookies from 'js-cookie'
 import { Plus, Trash, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import InputMask from 'react-input-mask'
@@ -32,7 +34,7 @@ import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { MovimentoPastoral } from '@/lib/definitions'
-import { storage } from '@/lib/firebase'
+import { auth, storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
 import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
 
@@ -85,11 +87,13 @@ export function MovimentoPastoralForm({
     defaultValues?.avatarUrl ?? null,
   )
   const [uploading, setUploading] = useState(false)
-
+  const { data: session } = useSession()
   const handleImageUpload = async (file: File | null) => {
     if (!file) return
     setUploading(true)
     try {
+      const credential = GoogleAuthProvider.credential(session?.id_token)
+      await signInWithCredential(auth, credential)
       const processedFile = await processImage(file)
       const imageRef = ref(storage, `avatars/${file.name}-${Date.now()}`)
       const snapshot = await uploadBytes(imageRef, processedFile)

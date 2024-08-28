@@ -1,10 +1,9 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
+import { User } from '@prisma/client'
 import NextAuth, { AuthOptions } from 'next-auth'
 import { Adapter } from 'next-auth/adapters'
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
 
-import { auth } from '@/lib/firebase'
 import prisma from '@/lib/prisma'
 
 const authOptions: AuthOptions = {
@@ -46,30 +45,28 @@ const authOptions: AuthOptions = {
     error: '/unauthorized', // displays authentication errors
   },
   callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user }
+    async jwt({ token, user, account }) {
+      // Include the user object and id_token in the JWT
+      if (user) {
+        token.user = user as User
+      }
+      if (account?.id_token) {
+        token.id_token = account.id_token
+      }
+      return token
     },
-    async signIn({ profile, account }) {
+    async signIn({ profile }) {
       const allowedEmail = 'guitrafer@gmail.com'
 
       if (profile?.email && profile?.email === allowedEmail) {
-        if (account?.provider === 'google' && account.id_token) {
-          const credential = GoogleAuthProvider.credential(account.id_token)
-          try {
-            await signInWithCredential(auth, credential)
-            return true
-          } catch (error) {
-            console.error('Erro ao autenticar no Firebase:', error)
-            return false
-          }
-        }
         return true
       } else {
         return false
       }
     },
     async session({ session, token }) {
-      session.user.role = token.role
+      session.user.role = token.user.role
+      session.id_token = token.id_token
       return session
     },
   },

@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   if (token && request.nextUrl.pathname.startsWith('/login'))
     return NextResponse.redirect(new URL('/', request.url))
 
-  switch (token?.role) {
+  switch (token?.user.role) {
     case 'admin':
       if (!request.nextUrl.pathname.startsWith('/admin')) {
         return NextResponse.redirect(new URL('/admin/grupos', request.url))
