@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import Cookies from 'js-cookie'
-import { Calendar as CalendarIcon } from 'lucide-react'
+import { Calendar as CalendarIcon, Loader2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -176,16 +176,20 @@ export function FormEvento({ setOpen, mode, defaultValues }: FormEventoProps) {
           )}
         />
         <div className="flex">
-          <Button
-            type="submit"
-            className="ml-auto"
-            disabled={
-              form.formState.isSubmitting ||
-              (mode === 'edit' && !form.formState.isDirty)
-            }
-          >
-            Salvar
-          </Button>
+          {form.formState.isSubmitting ? (
+            <Button disabled className="ml-auto">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Aguarde
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="ml-auto"
+              disabled={mode === 'edit' && !form.formState.isDirty}
+            >
+              Salvar
+            </Button>
+          )}
         </div>
       </form>
     </Form>

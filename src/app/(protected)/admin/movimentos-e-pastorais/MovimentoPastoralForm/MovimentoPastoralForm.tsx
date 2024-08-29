@@ -4,13 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import Cookies from 'js-cookie'
-import { Plus, Trash, XCircle } from 'lucide-react'
+import { Loader2, Plus, Trash, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import InputMask from 'react-input-mask'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -37,6 +36,7 @@ import { MovimentoPastoral } from '@/lib/definitions'
 import { auth, storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
 import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
+import { sanitizeAndFormatPhone } from '@/lib/utils'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -49,6 +49,8 @@ export function MovimentoPastoralForm({
   defaultValues,
   mode = 'new',
 }: MovimentoPastoralFormProps) {
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null) // Add this line at the top of your component
   const form = useForm<FormSchemaType>({
     mode: 'all',
     resolver: zodResolver(formSchema),
@@ -86,26 +88,12 @@ export function MovimentoPastoralForm({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     defaultValues?.avatarUrl ?? null,
   )
-  const [uploading, setUploading] = useState(false)
-  const { data: session } = useSession()
-  const handleImageUpload = async (file: File | null) => {
+  const handleImageChange = (file: File | null) => {
     if (!file) return
-    setUploading(true)
-    try {
-      const credential = GoogleAuthProvider.credential(session?.id_token)
-      await signInWithCredential(auth, credential)
-      const processedFile = await processImage(file)
-      const imageRef = ref(storage, `avatars/${file.name}-${Date.now()}`)
-      const snapshot = await uploadBytes(imageRef, processedFile)
-      const url = await getDownloadURL(snapshot.ref)
-      setAvatarUrl(url)
-      form.setValue('avatarUrl', url)
-    } catch (error) {
-      console.error('Error uploading image:', error)
-    } finally {
-      setUploading(false)
-    }
+    setAvatarFile(file)
+    setAvatarUrl(URL.createObjectURL(file)) // Show a preview of the image
   }
+  const { data: session } = useSession()
 
   const currentYear = new Date().getFullYear()
   const years = Array.from(new Array(50), (val, index) => currentYear - index)
@@ -115,6 +103,19 @@ export function MovimentoPastoralForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      let uploadedUrl = avatarUrl
+      if (avatarFile) {
+        const credential = GoogleAuthProvider.credential(session?.id_token)
+        await signInWithCredential(auth, credential)
+        const processedFile = await processImage(avatarFile) // Use the file directly, or process it as needed
+        const imageRef = ref(
+          storage,
+          `avatars/${avatarFile.name}-${Date.now()}`,
+        )
+        const snapshot = await uploadBytes(imageRef, processedFile)
+        uploadedUrl = await getDownloadURL(snapshot.ref)
+        form.setValue('avatarUrl', uploadedUrl)
+      }
       const token = Cookies.get('next-auth.session-token')
       const url =
         mode === 'new'
@@ -127,7 +128,7 @@ export function MovimentoPastoralForm({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho Authorization
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, avatarUrl: uploadedUrl }),
       })
 
       if (response.ok) {
@@ -158,6 +159,7 @@ export function MovimentoPastoralForm({
         })
       }
     } catch (error) {
+      console.log(error)
       toast({
         variant: 'destructive',
         title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} movimento ou pastoral`,
@@ -191,22 +193,27 @@ export function MovimentoPastoralForm({
                 Nome <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input placeholder="Nome do movimento ou pastoral" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Nome do movimento ou pastoral"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        />{' '}
-        <div className="mb-6">
+        />
+        <div>
           <FormLabel>Avatar</FormLabel>
           <Input
+            ref={fileInputRef}
             className="mt-2"
             type="file"
+            disabled={form.formState.isSubmitting}
             accept="image/*"
             onChange={(e) =>
-              handleImageUpload(e.target.files ? e.target.files[0] : null)
+              handleImageChange(e.target.files ? e.target.files[0] : null)
             }
-            disabled={uploading}
           />
           {avatarUrl && (
             <div className="mt-4 flex justify-center">
@@ -220,9 +227,15 @@ export function MovimentoPastoralForm({
               <Button
                 type="button"
                 size="icon"
+                disabled={form.formState.isSubmitting}
                 onClick={() => {
+                  setAvatarFile(null)
                   setAvatarUrl(null)
+
                   form.setValue('avatarUrl', '')
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '' // Reset the file input
+                  }
                 }}
                 variant="ghost"
               >
@@ -241,6 +254,7 @@ export function MovimentoPastoralForm({
               </FormLabel>
               <FormControl>
                 <Select
+                  disabled={form.formState.isSubmitting}
                   value={field.value}
                   onValueChange={(value) => field.onChange(value)}
                 >
@@ -267,7 +281,11 @@ export function MovimentoPastoralForm({
                 <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input placeholder="Paróquias ou comunidades" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Paróquias ou comunidades"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -280,7 +298,11 @@ export function MovimentoPastoralForm({
             <FormItem>
               <FormLabel>Carisma</FormLabel>
               <FormControl>
-                <Input placeholder="Informe o carisma" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Informe o carisma"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -293,7 +315,11 @@ export function MovimentoPastoralForm({
             <FormItem>
               <FormLabel>Ano de fundação</FormLabel>
               <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
+                <Select
+                  disabled={form.formState.isSubmitting}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <div className="flex flex-row">
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o ano de fundação" />
@@ -303,6 +329,7 @@ export function MovimentoPastoralForm({
                       variant="ghost"
                       className="ml-2"
                       size="icon"
+                      disabled={form.formState.isSubmitting}
                       onClick={(e) => {
                         form.setValue('anoFundacao', '')
                         e.stopPropagation()
@@ -332,6 +359,7 @@ export function MovimentoPastoralForm({
               <FormLabel>Biografia</FormLabel>
               <FormControl>
                 <Textarea
+                  disabled={form.formState.isSubmitting}
                   placeholder="Hisória do grupo"
                   {...field}
                   maxLength={500}
@@ -355,7 +383,11 @@ export function MovimentoPastoralForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Nome do coordenador" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="Nome do coordenador"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -368,16 +400,17 @@ export function MovimentoPastoralForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <InputMask
-                          mask="(99) 99999-9999"
+                        <Input
+                          disabled={form.formState.isSubmitting}
                           value={field.value}
-                          onChange={field.onChange}
-                        >
-                          <Input
-                            placeholder="Telefone do coordenador"
-                            // {...field}
-                          />
-                        </InputMask>
+                          onChange={(e) => {
+                            const formattedValue = sanitizeAndFormatPhone(
+                              e.target.value,
+                            )
+                            field.onChange(formattedValue)
+                          }}
+                          placeholder="Telefone do coordenador"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -389,7 +422,11 @@ export function MovimentoPastoralForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="E-mail do coordenador" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="E-mail do coordenador"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -400,6 +437,7 @@ export function MovimentoPastoralForm({
                 type="button"
                 onClick={() => remove(index)}
                 variant="ghost"
+                disabled={form.formState.isSubmitting}
               >
                 <Trash className="h-4 w-4" />
               </Button>
@@ -410,6 +448,7 @@ export function MovimentoPastoralForm({
               <Button
                 type="button"
                 variant="outline"
+                disabled={form.formState.isSubmitting}
                 onClick={() => append({ nome: '', telefone: '', email: '' })}
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -434,6 +473,7 @@ export function MovimentoPastoralForm({
                     <FormItem>
                       <FormControl>
                         <Select
+                          disabled={form.formState.isSubmitting}
                           value={field.value}
                           onValueChange={(value) => field.onChange(value)}
                         >
@@ -456,7 +496,11 @@ export function MovimentoPastoralForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Nome de usuário" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="Nome de usuário"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -468,6 +512,7 @@ export function MovimentoPastoralForm({
                 type="button"
                 onClick={() => removeRedes(index)}
                 variant="ghost"
+                disabled={form.formState.isSubmitting}
               >
                 <Trash className="h-4 w-4" />
               </Button>
@@ -475,7 +520,12 @@ export function MovimentoPastoralForm({
           ))}
           {redesFields.length < 2 && (
             <div className="mt-2 flex justify-center">
-              <Button type="button" variant="outline" onClick={handleAddRede}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={form.formState.isSubmitting}
+                onClick={handleAddRede}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Rede Social
               </Button>
@@ -491,7 +541,11 @@ export function MovimentoPastoralForm({
                 Jovens ativos <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
+                <Select
+                  disabled={form.formState.isSubmitting}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma opção" />
                   </SelectTrigger>
@@ -518,6 +572,7 @@ export function MovimentoPastoralForm({
               <FormLabel>Atividades</FormLabel>
               <FormControl>
                 <Textarea
+                  disabled={form.formState.isSubmitting}
                   maxLength={500}
                   placeholder="Atividades realizadas"
                   {...field}
@@ -535,6 +590,7 @@ export function MovimentoPastoralForm({
               <FormLabel>Observações</FormLabel>
               <FormControl>
                 <Textarea
+                  disabled={form.formState.isSubmitting}
                   placeholder="Observações sobre o movimento ou pastoral"
                   {...field}
                   maxLength={500}
@@ -548,9 +604,14 @@ export function MovimentoPastoralForm({
           <span className="mb-3 text-xs text-rose-500">
             * Campos obrigatórios
           </span>
-          <Button type="submit" disabled={form.formState.isLoading}>
-            Salvar
-          </Button>
+          {form.formState.isSubmitting ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Aguarde
+            </Button>
+          ) : (
+            <Button type="submit">Salvar</Button>
+          )}
         </div>
       </form>
     </Form>

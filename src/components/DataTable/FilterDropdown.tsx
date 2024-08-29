@@ -95,9 +95,9 @@ export function FilterBySetorAndParoquia<TData>({
                 <SelectValue placeholder="Selecione uma Paróquia" />
               </SelectTrigger>
               <SelectContent>
-                {selectedSetorData?.paroquias.map((paroquia, index) => (
-                  <SelectItem key={index} value={paroquia}>
-                    {paroquia}
+                {selectedSetorData?.paroquias.map((paroquia) => (
+                  <SelectItem key={paroquia.id} value={paroquia.nome}>
+                    {paroquia.nome}
                   </SelectItem>
                 ))}
               </SelectContent>

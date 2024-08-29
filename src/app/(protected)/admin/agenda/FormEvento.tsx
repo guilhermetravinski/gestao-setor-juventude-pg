@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import Cookies from 'js-cookie'
-import { Calendar as CalendarIcon } from 'lucide-react'
+import { Calendar as CalendarIcon, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -214,7 +214,11 @@ export function FormEvento({
             <FormItem>
               <FormLabel>Título</FormLabel>
               <FormControl>
-                <Input placeholder="Nome do evento" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Nome do evento"
+                  {...field}
+                />
               </FormControl>
 
               <FormMessage />
@@ -232,6 +236,7 @@ export function FormEvento({
               </FormDescription>
               <FormControl>
                 <Select
+                  disabled={form.formState.isSubmitting}
                   value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value)
@@ -261,7 +266,11 @@ export function FormEvento({
             <FormItem>
               <FormLabel>Local</FormLabel>
               <FormControl>
-                <Input placeholder="Local do evento" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Local do evento"
+                  {...field}
+                />
               </FormControl>
 
               <FormMessage />
@@ -275,7 +284,11 @@ export function FormEvento({
             <FormItem>
               <FormLabel>Público alvo</FormLabel>
               <FormControl>
-                <Input placeholder="Ex.: Jovens da comunidade" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Ex.: Jovens da comunidade"
+                  {...field}
+                />
               </FormControl>
 
               <FormMessage />
@@ -292,6 +305,7 @@ export function FormEvento({
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                      disabled={form.formState.isSubmitting}
                       variant={'outline'}
                       className={cn(
                         'pl-3 text-left font-normal',
@@ -332,6 +346,7 @@ export function FormEvento({
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                      disabled={form.formState.isSubmitting}
                       variant={'outline'}
                       className={cn(
                         'pl-3 text-left font-normal',
@@ -370,6 +385,7 @@ export function FormEvento({
               <FormLabel>Descrição</FormLabel>
               <FormControl>
                 <Textarea
+                  disabled={form.formState.isSubmitting}
                   maxLength={500}
                   placeholder="Descrição do evento"
                   {...field}
@@ -381,13 +397,20 @@ export function FormEvento({
           )}
         />
         <div className="flex">
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={form.formState.isSubmitting || !form.formState.isDirty}
-          >
-            Salvar evento
-          </Button>
+          {form.formState.isSubmitting ? (
+            <Button disabled className="w-full">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Aguarde
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!form.formState.isDirty}
+            >
+              Salvar evento
+            </Button>
+          )}
         </div>
       </form>
     </Form>

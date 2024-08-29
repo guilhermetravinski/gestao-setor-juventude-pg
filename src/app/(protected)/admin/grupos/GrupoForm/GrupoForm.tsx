@@ -4,13 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import Cookies from 'js-cookie'
-import { Plus, Trash, XCircle } from 'lucide-react'
+import { Loader2, Plus, Trash, XCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useEffect, useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import InputMask from 'react-input-mask'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -33,11 +32,12 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
-import { setores } from '@/data/setores'
+import { Paroquia, setores } from '@/data/setores'
 import { Grupo } from '@/lib/definitions'
 import { auth, storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
 import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
+import { sanitizeAndFormatPhone } from '@/lib/utils'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -87,7 +87,6 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     defaultValues?.avatarUrl ?? null,
   )
-  const [uploading, setUploading] = useState(false)
 
   const handleImageChange = (file: File | null) => {
     if (!file) return
@@ -96,7 +95,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
   }
 
   const [selectedSetor, setSelectedSetor] = useState(defaultValues?.setor ?? '')
-  const [paroquias, setParoquias] = useState<string[]>([])
+  const [paroquias, setParoquias] = useState<Paroquia[]>([])
   const currentYear = new Date().getFullYear()
   const years = Array.from(new Array(50), (val, index) => currentYear - index)
   const router = useRouter()
@@ -120,7 +119,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
       if (avatarFile) {
         const credential = GoogleAuthProvider.credential(session?.id_token)
         await signInWithCredential(auth, credential)
-        setUploading(true)
+
         const processedFile = await processImage(avatarFile) // Use the file directly, or process it as needed
         const imageRef = ref(
           storage,
@@ -179,8 +178,6 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
         title: `Erro ao ${mode === 'new' ? 'cadastrar' : 'atualizar'} grupo`,
         duration: 3000,
       })
-    } finally {
-      setUploading(false)
     }
   }
 
@@ -209,23 +206,27 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                 Nome <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input placeholder="Nome do grupo" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Nome do grupo"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <div className="mb-6">
+        <div>
           <FormLabel>Avatar</FormLabel>
           <Input
             ref={fileInputRef}
             className="mt-2"
+            disabled={form.formState.isSubmitting}
             type="file"
             accept="image/*"
             onChange={(e) =>
               handleImageChange(e.target.files ? e.target.files[0] : null)
             }
-            disabled={uploading}
           />
           {avatarUrl && (
             <div className="mt-4 flex justify-center">
@@ -239,6 +240,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               <Button
                 type="button"
                 size="icon"
+                disabled={form.formState.isSubmitting}
                 onClick={() => {
                   setAvatarFile(null)
                   setAvatarUrl(null)
@@ -264,6 +266,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               </FormLabel>
               <FormControl>
                 <Select
+                  disabled={form.formState.isSubmitting}
                   value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value)
@@ -298,14 +301,18 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                 Paróquia <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
+                <Select
+                  disabled={form.formState.isSubmitting}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma paróquia" />
                   </SelectTrigger>
                   <SelectContent>
-                    {paroquias.map((paroquia, index) => (
-                      <SelectItem key={index} value={paroquia}>
-                        {paroquia}
+                    {paroquias.map((paroquia) => (
+                      <SelectItem key={paroquia.id} value={paroquia.nome}>
+                        {paroquia.nome}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -325,7 +332,11 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                 Comunidade <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input placeholder="Matriz ou capelas" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Matriz ou capelas"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -338,7 +349,11 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
             <FormItem>
               <FormLabel>Ano de fundação</FormLabel>
               <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
+                <Select
+                  disabled={form.formState.isSubmitting}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <div className="flex flex-row">
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o ano de fundação" />
@@ -348,6 +363,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                       variant="ghost"
                       className="ml-2"
                       size="icon"
+                      disabled={form.formState.isSubmitting}
                       onClick={(e) => {
                         form.setValue('anoFundacao', '')
                         e.stopPropagation()
@@ -378,6 +394,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               <FormLabel>Biografia</FormLabel>
               <FormControl>
                 <Textarea
+                  disabled={form.formState.isSubmitting}
                   placeholder="Hisória do grupo"
                   {...field}
                   maxLength={500}
@@ -401,7 +418,11 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Nome do coordenador" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="Nome do coordenador"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -414,13 +435,17 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <InputMask
-                          mask="(99) 99999-9999"
+                        <Input
+                          disabled={form.formState.isSubmitting}
                           value={field.value}
-                          onChange={field.onChange}
-                        >
-                          <Input placeholder="Telefone do coordenador" />
-                        </InputMask>
+                          onChange={(e) => {
+                            const formattedValue = sanitizeAndFormatPhone(
+                              e.target.value,
+                            )
+                            field.onChange(formattedValue)
+                          }}
+                          placeholder="Telefone do coordenador"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -432,7 +457,11 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="E-mail do coordenador" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="E-mail do coordenador"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -442,6 +471,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               <Button
                 type="button"
                 onClick={() => remove(index)}
+                disabled={form.formState.isSubmitting}
                 variant="ghost"
               >
                 <Trash className="h-4 w-4" />
@@ -453,6 +483,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               <Button
                 type="button"
                 variant="outline"
+                disabled={form.formState.isSubmitting}
                 onClick={() => append({ nome: '', telefone: '', email: '' })}
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -477,6 +508,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                     <FormItem>
                       <FormControl>
                         <Select
+                          disabled={form.formState.isSubmitting}
                           value={field.value}
                           onValueChange={(value) => field.onChange(value)}
                         >
@@ -499,7 +531,11 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Nome de usuário" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="Nome de usuário"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -510,6 +546,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               <Button
                 type="button"
                 onClick={() => removeRedes(index)}
+                disabled={form.formState.isSubmitting}
                 variant="ghost"
               >
                 <Trash className="h-4 w-4" />
@@ -518,7 +555,12 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
           ))}
           {redesFields.length < 2 && (
             <div className="mt-2 flex justify-center">
-              <Button type="button" variant="outline" onClick={handleAddRede}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleAddRede}
+                disabled={form.formState.isSubmitting}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Rede Social
               </Button>
@@ -534,7 +576,11 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
                 Jovens ativos <span className="text-xs text-rose-500">*</span>
               </FormLabel>
               <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
+                <Select
+                  disabled={form.formState.isSubmitting}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma opção" />
                   </SelectTrigger>
@@ -560,7 +606,11 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
             <FormItem>
               <FormLabel>Reuniões</FormLabel>
               <FormControl>
-                <Input placeholder="Data e hora das reuniões" {...field} />
+                <Input
+                  disabled={form.formState.isSubmitting}
+                  placeholder="Data e hora das reuniões"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -574,6 +624,7 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
               <FormLabel>Observações</FormLabel>
               <FormControl>
                 <Textarea
+                  disabled={form.formState.isSubmitting}
                   placeholder="Observações sobre o grupo"
                   {...field}
                   maxLength={500}
@@ -587,12 +638,15 @@ export function GrupoForm({ defaultValues, mode = 'new' }: GrupoFormProps) {
           <span className="mb-3 text-xs text-rose-500">
             * Campos obrigatórios
           </span>
-          <Button
-            type="submit"
-            disabled={form.formState.isLoading || uploading}
-          >
-            Salvar grupo
-          </Button>
+
+          {form.formState.isSubmitting ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Aguarde
+            </Button>
+          ) : (
+            <Button type="submit">Salvar grupo</Button>
+          )}
         </div>
       </form>
     </Form>

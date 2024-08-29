@@ -23,7 +23,7 @@ export default async function CoordenacaoPage() {
           Coordenação diocesana
         </h1>
         <Link href="/admin/coordenacao/editar" passHref>
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" className="h-10 px-4 py-2">
             <Pencil className="mr-2 h-4 w-4" />
             Editar
           </Button>

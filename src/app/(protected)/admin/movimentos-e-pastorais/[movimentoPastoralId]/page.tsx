@@ -59,7 +59,7 @@ export default async function GrupoPage({ params }: GrupoPageProps) {
           href={`/admin/movimentos-e-pastorais/${movimentoPastoralId}/editar`}
           passHref
         >
-          <Button size="sm" variant="outline">
+          <Button size="sm" variant="outline" className="h-10 px-4 py-2">
             <Pencil className="mr-2 h-4 w-4" />
             Editar
           </Button>

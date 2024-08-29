@@ -32,7 +32,8 @@ const authOptions: AuthOptions = {
           image: profile.picture,
           role: profile.role
             ? profile.role
-            : profile.email === 'guitrafer@gmail.com'
+            : profile.email === 'guitrafer@gmail.com' ||
+                profile.email === 'sjuventudedpg@gmail.com'
               ? 'admin'
               : 'user',
         }
@@ -56,9 +57,9 @@ const authOptions: AuthOptions = {
       return token
     },
     async signIn({ profile }) {
-      const allowedEmail = 'guitrafer@gmail.com'
+      const allowedEmails = ['guitrafer@gmail.com', 'sjuventudedpg@gmail.com']
 
-      if (profile?.email && profile?.email === allowedEmail) {
+      if (profile?.email && allowedEmails.includes(profile?.email)) {
         return true
       } else {
         return false

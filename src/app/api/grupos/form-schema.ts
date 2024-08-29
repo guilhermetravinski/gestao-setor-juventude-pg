@@ -30,8 +30,8 @@ export const formSchema = z.object({
         }),
         telefone: z
           .string({ message: 'Campo obrigatório' })
-          .regex(/^\(\d{2}\) \d{5}-\d{4}$/, {
-            message: 'O telefone deve estar no formato (99) 99999-9999.',
+          .regex(/^\(\d{2}\) \d{1} \d{4}-\d{4}$/, {
+            message: 'O telefone deve estar no formato (99) 9 9999-9999.',
           }),
         email: z
           .string({ message: 'Campo obrigatório' })

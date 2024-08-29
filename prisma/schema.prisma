@@ -17,7 +17,6 @@ model User {
   image         String?
   role          String?
   accounts      Account[]
-  sessions      Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -43,24 +42,6 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-}
-
-model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@id([identifier, token])
 }
 
 model Coordenador {
@@ -169,12 +150,12 @@ model Evento {
 }
 
 model EmailLog {
-  id          Int      @id @default(autoincrement())
-  email       String
-  subject     String
-  status      String
-  response    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  sentAt      DateTime?
+  id        Int       @id @default(autoincrement())
+  email     String
+  subject   String
+  status    String
+  response  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sentAt    DateTime?
 }

@@ -4,13 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import Cookies from 'js-cookie'
-import { Plus, Trash } from 'lucide-react'
+import { Loader2, Plus, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import InputMask from 'react-input-mask'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
@@ -31,11 +30,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
-import { paroquias as totalParoquias, setores } from '@/data/setores'
+import { Paroquia, paroquias as totalParoquias, setores } from '@/data/setores'
 import { CoordenadorDiocesano, Organizador } from '@/lib/definitions'
 import { auth, storage } from '@/lib/firebase'
 import { processImage } from '@/lib/processImage'
 import { sendEmailsWithLog } from '@/lib/sendTermsEmailsWithLog'
+import { sanitizeAndFormatPhone } from '@/lib/utils'
 
 import { formSchema, FormSchemaType } from './form-schema'
 
@@ -61,10 +61,13 @@ export function CoordenacaoForm({
     control: form.control,
     name: 'coordenadores',
   })
+
+  const [avatarFile, setAvatarFile] = useState<(File | null)[]>(
+    fields.map(() => null),
+  )
   const [avatarUrl, setAvatarUrl] = useState<string[]>(
     parsedData.coordenadores.map((coordenador) => coordenador.avatarUrl ?? ''),
   )
-  const [uploading, setUploading] = useState(false)
 
   function updateAvatarUrl(index: number, newUrl: string) {
     setAvatarUrl((prevUrls) => {
@@ -73,10 +76,25 @@ export function CoordenacaoForm({
       return updatedUrls
     })
   }
-  const { data: session } = useSession()
-  const handleImageUpload = async (file: File | null, index: number) => {
+
+  const handleImageChange = (file: File | null, index: number) => {
     if (!file) return
-    setUploading(true)
+    setAvatarFile((prevFiles) => {
+      const updatedFiles = [...prevFiles]
+      updatedFiles[index] = file
+      return updatedFiles
+    })
+    setAvatarUrl((prevUrls) => {
+      const updatedUrls = [...prevUrls]
+      updatedUrls[index] = URL.createObjectURL(file)
+      return updatedUrls
+    })
+  }
+
+  const { data: session } = useSession()
+  const handleImageUpload = async (index: number) => {
+    const file = avatarFile[index]
+    if (!file) return
     try {
       const credential = GoogleAuthProvider.credential(session?.id_token)
       await signInWithCredential(auth, credential)
@@ -88,8 +106,6 @@ export function CoordenacaoForm({
       form.setValue(`coordenadores.${index}.avatarUrl`, url)
     } catch (error) {
       console.error('Error uploading image:', error)
-    } finally {
-      setUploading(false)
     }
   }
 
@@ -106,13 +122,13 @@ export function CoordenacaoForm({
   }
 
   const [paroquiasPorCoordenador, setParoquiasPorCoordenador] = useState<
-    string[][]
+    Paroquia[][]
   >(fields.map(() => totalParoquias))
 
   const handleRepresentationChange = (value: string, index: number) => {
-    let novasParoquias: string[] = []
+    let novasParoquias: Paroquia[] = []
 
-    if (value.includes('Setor')) {
+    if (value.includes('Setor') && !value.includes('Juventude')) {
       const setorData = setores.find((setor) => setor.label === value)
       novasParoquias = setorData ? setorData.paroquias : []
     } else {
@@ -130,6 +146,12 @@ export function CoordenacaoForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      for (let i = 0; i < fields.length; i++) {
+        await handleImageUpload(i)
+        values.coordenadores[i].avatarUrl = avatarUrl[i]
+      }
+
+      console.log(values)
       const token = Cookies.get('next-auth.session-token')
       const url = `${API_BASE_URL}/api/coordenadoresDiocesanos`
       const response = await fetch(url, {
@@ -193,26 +215,31 @@ export function CoordenacaoForm({
                         Nome <span className="text-xs text-rose-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Nome do coordenador" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="Nome do coordenador"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <div className="mb-6">
+                <div>
                   <FormLabel>Avatar</FormLabel>
                   <Input
                     className="mt-2"
                     type="file"
+                    disabled={form.formState.isSubmitting}
                     accept="image/*"
                     onChange={(e) =>
-                      handleImageUpload(
+                      handleImageChange(
                         e.target.files ? e.target.files[0] : null,
                         index,
                       )
                     }
-                    disabled={uploading}
                   />
+
                   {avatarUrl[index] && (
                     <div className="mt-4 flex justify-center">
                       <Image
@@ -225,6 +252,7 @@ export function CoordenacaoForm({
                       <Button
                         type="button"
                         size="icon"
+                        disabled={form.formState.isSubmitting}
                         onClick={() => {
                           updateAvatarUrl(index, '')
                           form.setValue(`coordenadores.${index}.avatarUrl`, '')
@@ -246,13 +274,17 @@ export function CoordenacaoForm({
                         <span className="text-xs text-rose-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <InputMask
-                          mask="(99) 99999-9999"
+                        <Input
+                          disabled={form.formState.isSubmitting}
                           value={field.value}
-                          onChange={field.onChange}
-                        >
-                          <Input placeholder="Telefone do coordenador" />
-                        </InputMask>
+                          onChange={(e) => {
+                            const formattedValue = sanitizeAndFormatPhone(
+                              e.target.value,
+                            )
+                            field.onChange(formattedValue)
+                          }}
+                          placeholder="Telefone do coordenador"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -267,7 +299,11 @@ export function CoordenacaoForm({
                         E-mail <span className="text-xs text-rose-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="E-mail do coordenador" {...field} />
+                        <Input
+                          disabled={form.formState.isSubmitting}
+                          placeholder="E-mail do coordenador"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -284,6 +320,7 @@ export function CoordenacaoForm({
                       </FormLabel>
                       <FormControl>
                         <Select
+                          disabled={form.formState.isSubmitting}
                           value={field.value}
                           onValueChange={(value) => {
                             field.onChange(value)
@@ -294,8 +331,11 @@ export function CoordenacaoForm({
                             <SelectValue placeholder="Selecione uma representação" />
                           </SelectTrigger>
                           <SelectContent>
-                            {representacoes.map((representacao, i) => (
-                              <SelectItem key={i} value={representacao.nome}>
+                            {representacoes.map((representacao) => (
+                              <SelectItem
+                                key={representacao.id}
+                                value={representacao.nome}
+                              >
                                 {representacao.nome}
                               </SelectItem>
                             ))}
@@ -317,6 +357,7 @@ export function CoordenacaoForm({
                       </FormLabel>
                       <FormControl>
                         <Select
+                          disabled={form.formState.isSubmitting}
                           value={field.value}
                           onValueChange={field.onChange}
                         >
@@ -324,13 +365,14 @@ export function CoordenacaoForm({
                             <SelectValue placeholder="Selecione uma paróquia" />
                           </SelectTrigger>
                           <SelectContent>
-                            {paroquiasPorCoordenador[index].map(
-                              (paroquia, i) => (
-                                <SelectItem key={i} value={paroquia}>
-                                  {paroquia}
-                                </SelectItem>
-                              ),
-                            )}
+                            {paroquiasPorCoordenador[index].map((paroquia) => (
+                              <SelectItem
+                                key={paroquia.id}
+                                value={paroquia.nome}
+                              >
+                                {paroquia.nome}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -344,6 +386,7 @@ export function CoordenacaoForm({
                 type="button"
                 onClick={() => remove(index)}
                 variant="ghost"
+                disabled={form.formState.isSubmitting}
               >
                 <Trash className="h-4 w-4" />
               </Button>
@@ -354,6 +397,7 @@ export function CoordenacaoForm({
               <Button
                 type="button"
                 variant="outline"
+                disabled={form.formState.isSubmitting}
                 onClick={handleAddCoordenador}
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -366,9 +410,15 @@ export function CoordenacaoForm({
           <span className="mb-3 text-xs text-rose-500">
             * Campos obrigatórios
           </span>
-          <Button type="submit" disabled={form.formState.isLoading}>
-            Salvar coordenadores
-          </Button>
+
+          {form.formState.isSubmitting ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Aguarde
+            </Button>
+          ) : (
+            <Button type="submit">Salvar coordenadores</Button>
+          )}
         </div>
       </form>
     </Form>
