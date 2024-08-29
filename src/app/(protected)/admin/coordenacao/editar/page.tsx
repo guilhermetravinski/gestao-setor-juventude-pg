@@ -14,7 +14,9 @@ import { CoordenacaoForm } from '../form/coordenacao-form'
 
 export default async function EditarCoordenacaoPage() {
   const cookieStore = cookies()
-  const token = cookieStore.get('next-auth.session-token')
+  const token =
+    cookieStore.get('next-auth.session-token') ??
+    cookieStore.get('__Secure-next-auth.session-token')
   const coordenadores = (await getCoordenadores(
     token?.value ?? '',
   )) as CoordenadorDiocesano[]

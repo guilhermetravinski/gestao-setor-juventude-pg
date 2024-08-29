@@ -31,7 +31,9 @@ interface GrupoPageProps {
 
 export default async function GrupoPage({ params }: GrupoPageProps) {
   const cookieStore = cookies()
-  const token = cookieStore.get('next-auth.session-token')
+  const token =
+    cookieStore.get('next-auth.session-token') ??
+    cookieStore.get('__Secure-next-auth.session-token')
 
   const { grupoId } = params
   const grupo = (await getGrupoById(grupoId, token?.value ?? '')) as Grupo

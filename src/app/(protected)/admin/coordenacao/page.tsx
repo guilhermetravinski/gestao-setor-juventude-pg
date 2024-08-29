@@ -11,7 +11,9 @@ import { getInitials } from '@/lib/utils'
 
 export default async function CoordenacaoPage() {
   const cookieStore = cookies()
-  const token = cookieStore.get('next-auth.session-token')
+  const token =
+    cookieStore.get('next-auth.session-token') ??
+    cookieStore.get('__Secure-next-auth.session-token')
   const coordenacao = (await getCoordenadores(
     token?.value ?? '',
   )) as CoordenadorDiocesano[]

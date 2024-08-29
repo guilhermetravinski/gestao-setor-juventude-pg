@@ -8,7 +8,9 @@ import { columns } from './columns'
 
 export default async function MovimentosEPastoraisPage() {
   const cookieStore = cookies()
-  const token = cookieStore.get('next-auth.session-token')
+  const token =
+    cookieStore.get('next-auth.session-token') ??
+    cookieStore.get('__Secure-next-auth.session-token')
   const movimentosPastorais = await getMovimentosPastorais(token?.value ?? '')
   return (
     <main className="flex flex-1 flex-col gap-8 bg-muted/40 p-10">

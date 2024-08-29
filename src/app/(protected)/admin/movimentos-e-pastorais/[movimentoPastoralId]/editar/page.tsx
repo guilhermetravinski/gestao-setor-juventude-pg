@@ -13,7 +13,9 @@ export default async function EditarMovimentoPastoralPage({
 }: MovimentoPastoralPageProps) {
   const { movimentoPastoralId } = params
   const cookieStore = cookies()
-  const token = cookieStore.get('next-auth.session-token')
+  const token =
+    cookieStore.get('next-auth.session-token') ??
+    cookieStore.get('__Secure-next-auth.session-token')
   const grupo = (await getMovimentoPastoralById(
     movimentoPastoralId,
     token?.value ?? '',

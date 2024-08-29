@@ -19,7 +19,9 @@ export default async function ProtectedLayout({
   children: React.ReactNode
 }>) {
   const cookieStore = cookies()
-  const token = cookieStore.get('next-auth.session-token')
+  const token =
+    cookieStore.get('next-auth.session-token') ??
+    cookieStore.get('__Secure-next-auth.session-token')
   const eventosProximos = await getEventosProximos(token?.value ?? '')
 
   return (

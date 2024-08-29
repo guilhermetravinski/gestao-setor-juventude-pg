@@ -14,7 +14,9 @@ import { EventosList } from './EventosList'
 
 export default async function AgendaPage() {
   const cookieStore = cookies()
-  const token = cookieStore.get('next-auth.session-token')
+  const token =
+    cookieStore.get('next-auth.session-token') ??
+    cookieStore.get('__Secure-next-auth.session-token')
   const eventos = (await getEventos(token?.value ?? '')) as Evento[]
   const grupos = (await getGrupos(token?.value ?? '')) as Grupo[]
   const movimentosPastorais = (await getMovimentosPastorais(
