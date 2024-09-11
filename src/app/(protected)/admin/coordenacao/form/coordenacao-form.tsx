@@ -77,24 +77,26 @@ export function CoordenacaoForm({
     })
   }
 
-  const handleImageChange = (file: File | null, index: number) => {
+  const handleImageChange = async (file: File | null, index: number) => {
     if (!file) return
+    const processedFile = await processImage(file)
     setAvatarFile((prevFiles) => {
       const updatedFiles = [...prevFiles]
-      updatedFiles[index] = file
+      updatedFiles[index] = processedFile
       return updatedFiles
     })
     setAvatarUrl((prevUrls) => {
       const updatedUrls = [...prevUrls]
-      updatedUrls[index] = URL.createObjectURL(file)
+      updatedUrls[index] = URL.createObjectURL(processedFile)
       return updatedUrls
     })
   }
 
   const { data: session } = useSession()
-  const handleImageUpload = async (index: number) => {
+  const handleImageUpload = async (index: number): Promise<string> => {
+    if (avatarUrl[index].includes('firebasestorage')) return avatarUrl[index]
     const file = avatarFile[index]
-    if (!file) return
+    if (!file) return ''
     try {
       const credential = GoogleAuthProvider.credential(session?.id_token)
       await signInWithCredential(auth, credential)
@@ -102,10 +104,11 @@ export function CoordenacaoForm({
       const imageRef = ref(storage, `avatars/${file.name}-${Date.now()}`)
       const snapshot = await uploadBytes(imageRef, processedFile)
       const url = await getDownloadURL(snapshot.ref)
-      updateAvatarUrl(index, url)
-      form.setValue(`coordenadores.${index}.avatarUrl`, url)
+      // updateAvatarUrl(index, url)
+      return url
     } catch (error) {
       console.error('Error uploading image:', error)
+      return ''
     }
   }
 
@@ -146,12 +149,15 @@ export function CoordenacaoForm({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      for (let i = 0; i < fields.length; i++) {
-        await handleImageUpload(i)
-        values.coordenadores[i].avatarUrl = avatarUrl[i]
-      }
+      const avatarUrls: string[] = await Promise.all(
+        fields.map(async (_, i) => await handleImageUpload(i)),
+      )
 
-      console.log(values)
+      // Atualiza os valores com os URLs reais do Firebase
+      values.coordenadores.forEach((coordenador, index) => {
+        coordenador.avatarUrl = avatarUrls[index]
+      })
+
       const token = Cookies.get('next-auth.session-token')
       const url = `${API_BASE_URL}/api/coordenadoresDiocesanos`
       const response = await fetch(url, {
@@ -232,8 +238,8 @@ export function CoordenacaoForm({
                     type="file"
                     disabled={form.formState.isSubmitting}
                     accept="image/*"
-                    onChange={(e) =>
-                      handleImageChange(
+                    onChange={async (e) =>
+                      await handleImageChange(
                         e.target.files ? e.target.files[0] : null,
                         index,
                       )
