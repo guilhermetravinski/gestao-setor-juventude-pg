@@ -9,23 +9,25 @@ export async function middleware(request: NextRequest) {
   if (token && request.nextUrl.pathname.startsWith('/login'))
     return NextResponse.redirect(new URL('/', request.url))
 
-  switch (token?.user.role) {
-    case 'admin':
-      if (!request.nextUrl.pathname.startsWith('/admin')) {
-        return NextResponse.redirect(new URL('/admin/grupos', request.url))
-      }
-      break
+  if (token && token.user) {
+    switch (token?.user.role) {
+      case 'admin':
+        if (!request.nextUrl.pathname.startsWith('/admin')) {
+          return NextResponse.redirect(new URL('/admin/grupos', request.url))
+        }
+        break
 
-    case 'user':
-      if (!request.nextUrl.pathname.startsWith('/unauthorized')) {
-        return NextResponse.redirect(new URL('/unauthorized', request.url))
-      }
-      break
+      case 'user':
+        if (!request.nextUrl.pathname.startsWith('/unauthorized')) {
+          return NextResponse.redirect(new URL('/unauthorized', request.url))
+        }
+        break
 
-    default:
-      if (!request.nextUrl.pathname.startsWith('/login')) {
-        return NextResponse.redirect(new URL('/login', request.url))
-      }
+      default:
+        if (!request.nextUrl.pathname.startsWith('/login')) {
+          return NextResponse.redirect(new URL('/login', request.url))
+        }
+    }
   }
 }
 
