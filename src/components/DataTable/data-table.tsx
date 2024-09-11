@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
   }
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex flex-col items-center py-4 md:flex-row">
         <Input
           placeholder="Buscar por nome..."
           value={(table.getColumn('nome')?.getFilterValue() as string) ?? ''}
@@ -88,19 +88,17 @@ export function DataTable<TData, TValue>({
           }
           className="mr-3 max-w-sm"
         />
-
-        <Button
-          className="ml-auto"
-          onClick={() => router.push(novoRegistroPath)}
-        >
-          <Plus className="mr-2 h-4 w-4" /> Adicionar
-        </Button>
-        {type === 'grupos' && <FilterBySetorAndParoquia table={table} />}
-        <ExportDropdown
-          data={getFilteredData()}
-          type={type}
-          disabled={getFilteredData().length === 0}
-        />
+        <div className="mt-4 flex md:ml-auto md:mt-0">
+          <Button onClick={() => router.push(novoRegistroPath)}>
+            <Plus className="mr-2 h-4 w-4" /> Adicionar
+          </Button>
+          {type === 'grupos' && <FilterBySetorAndParoquia table={table} />}
+          <ExportDropdown
+            data={getFilteredData()}
+            type={type}
+            disabled={getFilteredData().length === 0}
+          />
+        </div>
       </div>
       <div className="rounded-md border bg-card">
         <Table>

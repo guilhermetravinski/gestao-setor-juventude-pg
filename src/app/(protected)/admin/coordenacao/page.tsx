@@ -20,24 +20,26 @@ export default async function CoordenacaoPage() {
 
   return (
     <main className="flex flex-1 flex-col gap-8 bg-muted/40 p-10">
-      <div className="mx-auto flex w-full max-w-6xl gap-2">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 md:flex-row">
         <h1 className="mr-auto text-3xl font-semibold">
           Coordenação diocesana
         </h1>
-        <Link href="/admin/coordenacao/editar" passHref>
-          <Button size="sm" variant="outline" className="h-10 px-4 py-2">
-            <Pencil className="mr-2 h-4 w-4" />
-            Editar
-          </Button>
-        </Link>
-        <ExportDropdown
-          type="coordenadores-diocesanos"
-          data={coordenacao}
-          disabled={coordenacao.length === 0}
-        />
+        <div className="mx-auto mt-4 flex md:mx-0 md:mt-0">
+          <Link href="/admin/coordenacao/editar" passHref>
+            <Button size="sm" variant="outline" className="h-10 px-4 py-2">
+              <Pencil className="mr-2 h-4 w-4" />
+              Editar
+            </Button>
+          </Link>
+          <ExportDropdown
+            type="coordenadores-diocesanos"
+            data={coordenacao}
+            disabled={coordenacao.length === 0}
+          />
+        </div>
       </div>
 
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {coordenacao.length === 0 && (
           <div className="flex- col-span-1 md:col-span-3">
             <div className="flex flex-col items-center justify-center">

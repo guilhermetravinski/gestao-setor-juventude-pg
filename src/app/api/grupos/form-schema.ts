@@ -10,7 +10,7 @@ export const formSchema = z.object({
       required_error: 'Selecione o número de jovens ativos.',
     },
   ),
-  avatarUrl: z.string().optional(),
+  avatarUrl: z.string().optional().nullable(),
   reunioes: z.string().optional(),
   atas: z
     .array(

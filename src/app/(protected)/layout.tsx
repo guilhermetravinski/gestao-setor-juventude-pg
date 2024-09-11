@@ -1,4 +1,4 @@
-import { Menu, Package2 } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -59,34 +59,32 @@ export default async function ProtectedLayout({
                 className="shrink-0 md:hidden"
               >
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
               <nav className="grid gap-6 text-lg font-medium">
                 <Link
                   href="/"
-                  className="flex items-center gap-2 text-lg font-semibold"
+                  className="flex items-center gap-2 text-lg font-semibold md:text-base"
                 >
-                  <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
+                  <Image
+                    src={logo}
+                    alt="Logo do Setor Juventude de Ponta Grossa"
+                    height={36}
+                    className="rounded-lg"
+                    placeholder="blur"
+                  />
+                  <span className="sr-only">
+                    Logo do Setor Juventude de Ponta Grossa
+                  </span>
                 </Link>
 
-                <Link
-                  href="/coordenacao"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Coordenação
-                </Link>
-                <Link
-                  href="/grupos"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Grupos
-                </Link>
-                <Link href="/agenda" className="hover:text-foreground">
-                  Agenda
-                </Link>
+                <NavLink slug="/admin/coordenacao">Coordenação</NavLink>
+                <NavLink slug="/admin/grupos">Grupos</NavLink>
+                <NavLink slug="/admin/movimentos-e-pastorais">
+                  Movimentos e pastorais
+                </NavLink>
+                <NavLink slug="/admin/agenda">Agenda</NavLink>
               </nav>
             </SheetContent>
           </Sheet>

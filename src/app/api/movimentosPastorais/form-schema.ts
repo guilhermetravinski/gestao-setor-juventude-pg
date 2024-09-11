@@ -10,7 +10,7 @@ export const formSchema = z.object({
       required_error: 'Selecione o número de jovens ativos.',
     },
   ),
-  avatarUrl: z.string().optional(),
+  avatarUrl: z.string().optional().nullable(),
   tipo: z.enum(['Pastoral', 'Movimento'], {
     required_error: 'Selecione o tipo.',
   }),

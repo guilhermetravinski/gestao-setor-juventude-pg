@@ -43,14 +43,16 @@ export function EventosList({ organizadoresApi, eventos }: EventosListProps) {
       <div className="mx-auto w-full md:max-w-3xl">
         <MonthNavigator />
         <Card>
-          <CardHeader className="flex flex-row space-y-0">
+          <CardHeader className="flex flex-col space-y-0 md:flex-row">
             <CardTitle>Eventos</CardTitle>
-            <DialogEvento organizadoresApi={organizadoresApi} mode="new" />
-            <ExportDropdown
-              data={filteredEventos}
-              type="eventos"
-              disabled={filteredEventos.length === 0}
-            />
+            <div className="mx-auto flex pt-4 md:mx-0 md:ml-auto md:pt-0">
+              <DialogEvento organizadoresApi={organizadoresApi} mode="new" />
+              <ExportDropdown
+                data={filteredEventos}
+                type="eventos"
+                disabled={filteredEventos.length === 0}
+              />
+            </div>
           </CardHeader>
           <CardContent className="flex flex-col">
             {filteredEventos.length === 0 ? (
